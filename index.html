@@ -1,16 +1,25 @@
 <!DOCTYPE html> <!-- February 2021 - RoccoLox Programs -->
+<!-- 
+    Thank you Privacy_Dragon for your suggestions.
+    Thank you mr womp womp and KMisthebomb for your code suggestions.
+    Thank you to anyone else who suggested features and has used this program.
+-->
 <html>
     <head>
         <title>Xlibc Color Picker</title>
-        <style type="text/css">
+        <style type="text/css"> /* CSS styling */
             body {
                 background-color: rgb(235,235,235);
             }
             td {
-                cursor: pointer;
+                cursor: pointer; /* thank you KMisthebomb */
                 width: 35px;
                 height: 35px;
                 border-style: none;
+            }
+            table td:hover { /* thank you mr womp womp */
+                border: solid black 1px;
+                padding: 0px;
             }
             td.osColors {
                 width: 6.6%;
@@ -29,39 +38,164 @@
                 text-align: center;
                 font-weight: bold;
                 font-size: 300%;
-                padding: 4%;
+                padding: 2.5%;
                 font-family: sans-serif;
-                margin: 45px auto 25px auto;
+                margin: 40px auto 25px auto;
+            }
+            p.rgb {
+                text-align: center;
+                font-family: sans-serif;
+                font-size: 50%;
+                margin: 0px;
+                padding: 10px 0px 0px 0px;
+            }
+            p.osRGB {
+                text-align: center;
+                font-family: sans-serif;
+                font-size: 150%;
             }
             h1 {
-                margin: 15px 0px 30px 0px;
+                margin: 5px 0px 30px 0px;
                 text-align: center;
                 font-size: 250%;
                 font-family: sans-serif;
                 font-weight: normal;
                 text-decoration: underline;
             }
+            h3 {
+                color: #000000;
+                margin: 0px;
+                cursor: pointer;
+            }
+            footer {
+                bottom: 0px;
+                left: 0px;
+                position: fixed;
+                width: 100%;
+            }
             a {
                 text-decoration: none;
                 color: #0179f9;
                 font-family: sans-serif;
                 font-size: 110%;
+                padding: 0px 5px 5px 5px;
             }
         </style>
         <script type="text/javascript">
-            // Privacy_Dragon's code plus some tweaks 
-            function colorf(n,r,g,b,hex){
-                document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid;`);
-                document.getElementById('text').innerHTML = `${n}<br>${hex}`;
+            // thank you Privacy_Dragon
+            // xlibc colors with white foreground text color
+            function colorf(n,r,g,b,hex) {
+                // remove TI-OS color box
+                document.getElementById('osRGB').setAttribute("style","padding: 0px; margin: 0px;");
+                document.getElementById('osRGB').innerHTML = '';
+                if (localStorage.getItem("mode") == 'light') { // for light mode
+                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid;`); // display xlibc color
+                } else { // for dark mode
+                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid;`); // display xlibc color
+                }
+                document.getElementById('text').innerHTML = `${n}<br>${hex}<p class="rgb">R: ${r} G: ${g} B: ${b}</p>`; // display xlibc values
+                document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`); // remove selection box
+                document.getElementsByTagName('td')[n].setAttribute("style",`background-color: rgb(${r},${g},${b}); border: solid black 1px; padding: 0px;`); // add selection box
+                // copy variable values
+                oldn = n;
+                oldr = r;
+                oldg = g;
+                oldb = b;
             }
+
+            // xlibc colors with black foreground text color
             function color0(n,r,g,b,hex) {
-                document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #000000; border-width: thin; border-style: solid;`);
-                document.getElementById('text').innerHTML = `${n}<br>${hex}`;
+                // remove TI-OS color box
+                document.getElementById('osRGB').setAttribute("style","padding: 0px; margin: 0px;");
+                document.getElementById('osRGB').innerHTML = '';
+                if (localStorage.getItem("mode") == 'light') { // for light mode
+                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #000000; border-width: thin; border-style: solid;`); // display xlibc color
+                } else { // for dark mode
+                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #ffffff; border-width: thin; border-style: solid;`); // display xlibc color
+                }
+                document.getElementById('text').innerHTML = `${n}<br>${hex}<p class="rgb">R: ${r} G: ${g} B: ${b}</p>`; // display xlibc values
+                document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`); // remove selection box
+                document.getElementsByTagName('td')[n].setAttribute("style",`background-color: rgb(${r},${g},${b}); border: solid black 1px; padding: 0px;`); // add selection box
+                // copy variable values
+                oldn = n;
+                oldr = r;
+                oldg = g;
+                oldb = b;
+            }
+
+            // TI-OS colors with white foreground text color
+            function OScolorf(n,r,g,b,hex,or,og,ob) {
+                // remove selection box
+                document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`);
+                if (localStorage.getItem("mode") == 'light') { // for light mode
+                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
+                    document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 0px;`); // display actual color
+                } else { // for dark mode
+                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
+                    document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 0px;`); // display actual color
+                }
+                document.getElementById('text').innerHTML = `${n}<br>${hex}<p class="rgb">R: ${r} G: ${g} B: ${b}</p>`; // xlibc equivalent color value
+                document.getElementById('osRGB').innerHTML = `R: ${or} G: ${og} B: ${ob}`; // display actual rgb value
+            }
+            
+            // TI-OS colors with bacl foreground text color
+            function OScolor0(n,r,g,b,hex,or,og,ob) {
+                // remove selection box
+                document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`);
+                if (localStorage.getItem("mode") == 'light') { // for light mode
+                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #000000; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
+                    document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #000000; border-color: #000000; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 0px;`); // display actual color
+                } else { // for dark mode
+                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #ffffff; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
+                    document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #000000; border-color: #ffffff; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 0px;`); // display actual color
+                }
+                document.getElementById('text').innerHTML = `${n}<br>${hex}<p class="rgb">R: ${r} G: ${g} B: ${b}</p>`; // xlibc equivalent color value
+                document.getElementById('osRGB').innerHTML = `R: ${or} G: ${og} B: ${ob}`; // display actual rgb value
+            }
+
+            // mode changes
+            function changemode() {
+                // restore default positions
+                document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`);
+                document.getElementById('osRGB').setAttribute("style","padding: 0px; margin: 0px;");
+                document.getElementById('osRGB').innerHTML = '';
+                if (localStorage.getItem("mode") == 'light') { // change mode
+                    localStorage.setItem("mode","dark");
+                    darkmode();
+                } else {
+                    localStorage.setItem("mode","light");
+                    lightmode();
+                }
+            }
+
+            function lightmode() { // set to light mode
+                document.getElementById("background").setAttribute("style","background-color: rgb(235,235,235);"); // chanhe background
+                document.getElementsByTagName("footer")[0].setAttribute("style","background-color: rgb(235,235,235);"); // change footer background
+                document.getElementById("title").setAttribute("style","color: #000000;"); // change text color
+                document.getElementById("mode").setAttribute("style","color: #000000;");
+                document.getElementById("mode").innerHTML = 'Switch to Dark Mode'; // change option
+                document.getElementById("OSColors").setAttribute("style","margin: 10px auto; border-color: #000000; border-width: thin; border-style: solid;");
+                document.getElementById("text").setAttribute("style","color: #ffffff; border-color: #000000; border-width: thin; border-style: solid; background-color: rgb(0,0,0);");
+                document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0</p>'; // reset values
+                document.getElementById("TI").setAttribute("style","font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px; padding: 0px;"); // change text color
+            }
+
+            function darkmode() { // set to dark mode
+                document.getElementById("background").setAttribute("style","background-color: rgb(40,40,40);"); // change background
+                document.getElementsByTagName("footer")[0].setAttribute("style","background-color: rgb(40,40,40);"); // change footer background
+                document.getElementById("title").setAttribute("style","color: #ffffff;"); // change text color
+                document.getElementById("mode").setAttribute("style","color: #ffffff;");
+                document.getElementById("mode").innerHTML = 'Switch to Light Mode'; // change option
+                document.getElementById("OSColors").setAttribute("style","margin: 10px auto; border-color: #ffffff; border-width: thin; border-style: solid;"); // change border color
+                document.getElementById("text").setAttribute("style","color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid; background-color: rgb(0,0,0);");
+                document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0</p>'; // reset values
+                document.getElementById("TI").setAttribute("style","font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px; padding: 0px; color: #ffffff;"); // change text color
             }
         </script>
     </head>
-    <body>
-        <h1>Xlibc Color Picker</h1>
+    <body id="background">
+        <h3 id="mode" onclick="changemode()">Switch to Dark Mode</h3> <!-- mode selector -->
+        <h1 id="title">Xlibc Color Picker</h1>
         <table cellspacing=0>
             <tr>
                 <td style="background-color: rgb(0,0,0);" onclick="colorf(0,0,0,0,'0x00')"></td>
@@ -336,28 +470,53 @@
                 <td style="background-color: rgb(255,255,255);" onclick="color0(255,255,255,255,'0xFF')"></td>
             </tr>
         </table>
-        <p id="text" style="background-color: #000000; color: #ffffff; border-color: #000000; border-width: thin; border-style: solid;">0<br>0x00</p>
-        <table style="margin: 10px auto; border-color: #000000; border-width: thin; border-style: solid;" cellspacing=0>
+        <p id="text" style="background-color: #000000; color: #ffffff; border-color: #000000; border-width: thin; border-style: solid;">
+            0<br>0x00
+        </p>
+        <p class="osRGB" id="osRGB" style="padding: 0px; margin: 0px;"></p> <!-- for displaying TI-OS color values -->
+        <table id="OSColors" style="margin: 10px auto; border-color: #000000; border-width: thin; border-style: solid;" cellspacing=0>
             <tr>
-                <td class="osColors" style="background-color: rgb(0,0,255);" onclick="colorf('~25',24,32,207,'0x19')">BLUE</td>
-                <td class="osColors" style="background-color: rgb(255,0,0);" onclick="colorf('~224',231,28,0,'0xE0')">RED</td>
-                <td class="osColors" style="background-color: rgb(0,0,0);" onclick="colorf(0,0,0,0,'0x00')">BLACK</td>
-                <td class="osColors" style="background-color: rgb(255,0,255);" onclick="colorf('~249',255,60,207,'0xF9')">MAGENTA</td>
-                <td class="osColors" style="background-color: rgb(0,158,0);" onclick="colorf('~5',0,162,40,'0x05')">GREEN</td>
-                <td class="osColors" style="background-color: rgb(255,132,42);" onclick="colorf('~227',231,125,24,'0xE3')">ORANGE</td>
-                <td class="osColors" style="background-color: rgb(182,32,0);" onclick="colorf('~160',166,20,0,'0xA0')">BROWN</td>
-                <td class="osColors" style="background-color: rgb(0,0,134);" onclick="colorf('~16',16,0,134,'0x10')">NAVY</td>
-                <td class="osColors" style="background-color: rgb(0,146,255);" onclick="colorf('~28',24,130,231,'0x1C')">LTBLUE</td>
-                <td class="osColors" style="background-color: rgb(255,255,0); color: #000000;" onclick="color0('~231',231,255,56,'0xE7')">YELLOW</td>
-                <td class="osColors" style="background-color: rgb(255,255,255); color: #000000;" onclick="color0(255,255,255,255,'0xFF')">WHITE</td>
-                <td class="osColors" style="background-color: rgb(231,227,231); color: #000000;" onclick="color0('~222',223,219,247,'0xDE')">LTGRAY</td>
-                <td class="osColors" style="background-color: rgb(199,195,199); color: #000000;" onclick="color0('No known',235,235,235,'close matches')">MEDGRAY</td>
-                <td class="osColors" style="background-color: rgb(142,138,142); color: #000000;" onclick="color0('No known',235,235,235,'close matches')">GRAY</td>
-                <td class="osColors" style="background-color: rgb(81,85,81);" onclick="colorf('~74',73,73,81,'0x4A')">DARKGRAY</td>
+                <td class="osColors" style="background-color: rgb(0,0,255);" onclick="OScolorf('~25',24,32,207,'0x19',0,0,225)">BLUE</td>
+                <td class="osColors" style="background-color: rgb(255,0,0);" onclick="OScolorf('~224',231,28,0,'0xE0',255,0,0)">RED</td>
+                <td class="osColors" style="background-color: rgb(0,0,0);" onclick="OScolorf('0',0,0,0,'0x00',0,0,0)">BLACK</td>
+                <td class="osColors" style="background-color: rgb(255,0,255);" onclick="OScolorf('~249',255,60,207,'0xF9',255,0,255)">MAGENTA</td>
+                <td class="osColors" style="background-color: rgb(0,158,0);" onclick="OScolorf('~5',0,162,40,'0x05',0,158,0)">GREEN</td>
+                <td class="osColors" style="background-color: rgb(255,132,42);" onclick="OScolorf('~227',231,125,24,'0xE3',255,132,42)">ORANGE</td>
+                <td class="osColors" style="background-color: rgb(182,32,0);" onclick="OScolorf('~160',166,20,0,'0xA0',182,32,0)">BROWN</td>
+                <td class="osColors" style="background-color: rgb(0,0,134);" onclick="OScolorf('~16',16,0,134,'0x10',0,0,134)">NAVY</td>
+                <td class="osColors" style="background-color: rgb(0,146,255);" onclick="OScolorf('~28',24,130,231,'0x1C',0,146,255)">LTBLUE</td>
+                <td class="osColors" style="background-color: rgb(255,255,0); color: #000000;" onclick="OScolor0('~231',231,255,56,'0xE7',255,255,0)">YELLOW</td>
+                <td class="osColors" style="background-color: rgb(255,255,255); color: #000000;" onclick="OScolor0('255',255,255,255,'0xFF',255,255,255)">WHITE</td>
+                <td class="osColors" style="background-color: rgb(231,227,231); color: #000000;" onclick="OScolor0('~222',223,219,247,'0xDE',231,227,231)">LTGRAY</td>
+                <td class="osColors" style="background-color: rgb(199,195,199); color: #000000;" onclick="OScolor0('No known',199,195,199,'close matches',199,195,199)">MEDGRAY</td>
+                <td class="osColors" style="background-color: rgb(142,138,142); color: #000000;" onclick="OScolor0('No known',142,138,142,'close matches',142,138,142)">GRAY</td>
+                <td class="osColors" style="background-color: rgb(81,85,81);" onclick="OScolorf('~74',73,73,81,'0x4A',81,85,81)">DARKGRAY</td>
             </tr>
         </table>
-        <p style="font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px; padding: 0px;">TI-OS Colors</p>
-        <a href="https://www.cemetech.net/forum/viewtopic.php?t=17446&start=0&postdays=0&postorder=asc&highlight=">Ask a question or suggest a feature...</a>
-        <a href="https://github.com/RoccoLoxPrograms/XlibcColorPicker/releases" style="float: right;">Download the newest version...</a>
+        <p  id ="TI" style="font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px; padding: 0px;">TI-OS Colors</p>
+        <footer> <!-- advertising! -->
+            <hr style="margin: 0px; margin-bottom: 5px;">
+            <a href="https://www.cemetech.net/forum/viewtopic.php?t=17446&start=0&postdays=0&postorder=asc&highlight=">Ask a question or suggest a feature...</a>
+            <a href="https://github.com/RoccoLoxPrograms/XlibcColorPicker/releases" style="float: right;">Download the newest version...</a>
+        </footer>
+        <script type="text/javascript">
+            // define all of these variables
+            var mode = 'light'; // default mode is light
+            var r = 0;
+            var g = 0;
+            var b = 0;
+            var n = 0;
+            var hex = '0x00';
+            var oldn = n;
+            var oldr = r;
+            var oldg = g;
+            var oldb = b;
+            mode = localStorage.getItem("mode"); // find current mode (if there is one)
+            if (mode == 'light' || mode == null) { // set mode
+                lightmode();
+            } else {
+                darkmode();
+            }
+        </script>
     </body>
 </html>
