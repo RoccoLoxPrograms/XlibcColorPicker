@@ -159,11 +159,11 @@
                 document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`);
                 document.getElementById('osRGB').setAttribute("style","padding: 0px; margin: 0px;");
                 document.getElementById('osRGB').innerHTML = '';
-                if (localStorage.getItem("mode") == 'light') { // change mode
-                    localStorage.setItem("mode","dark");
+                if (document.getElementById('mode').innerText == 'Switch to Dark Mode') { // change mode
+                    localStorage.setItem("xlibcMode","dark");
                     darkmode();
                 } else {
-                    localStorage.setItem("mode","light");
+                    localStorage.setItem("xlibcMode","light");
                     lightmode();
                 }
             }
@@ -502,7 +502,6 @@
         </footer>
         <script type="text/javascript">
             // define all of these variables
-            var mode = 'light'; // default mode is light
             var r = 0;
             var g = 0;
             var b = 0;
@@ -512,11 +511,12 @@
             var oldr = r;
             var oldg = g;
             var oldb = b;
-            mode = localStorage.getItem("mode"); // find current mode (if there is one)
-            if (mode == 'light' || mode == null) { // set mode
-                lightmode();
-            } else {
+            var mode = localStorage.getItem("xlibcMode"); // find current mode (if there is one)
+            if (mode == 'dark') { // switch to dark mode
                 darkmode();
+            } else { // default mode is light
+                document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0</p>';
+                document.getElementsByTagName("footer")[0].setAttribute("style","background-color: rgb(235,235,235);");
             }
         </script>
     </body>
