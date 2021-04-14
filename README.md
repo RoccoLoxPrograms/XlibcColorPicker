@@ -1,5 +1,5 @@
 # Xlibc Color Picker
-Xlibc Color Picker for C and Assembly programmers on the TI-84 Plus CE
+Xlibc Color Picker for C and Assembly programmers on the TI-84 Plus CE.
 
 # Features
 * Shows the value of each xlibc value just by clicking on it.
