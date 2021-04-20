@@ -88,7 +88,7 @@
                 // remove TI-OS color box
                 document.getElementById('osRGB').setAttribute("style","padding: 0px; margin: 0px;");
                 document.getElementById('osRGB').innerHTML = '';
-                if (localStorage.getItem("mode") == 'light') { // for light mode
+                if (localStorage.getItem("xlibcMode") == 'light') { // for light mode
                     document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid;`); // display xlibc color
                 } else { // for dark mode
                     document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid;`); // display xlibc color
@@ -108,7 +108,7 @@
                 // remove TI-OS color box
                 document.getElementById('osRGB').setAttribute("style","padding: 0px; margin: 0px;");
                 document.getElementById('osRGB').innerHTML = '';
-                if (localStorage.getItem("mode") == 'light') { // for light mode
+                if (localStorage.getItem("xlibcMode") == 'light') { // for light mode
                     document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #000000; border-width: thin; border-style: solid;`); // display xlibc color
                 } else { // for dark mode
                     document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #ffffff; border-width: thin; border-style: solid;`); // display xlibc color
@@ -127,7 +127,7 @@
             function OScolorf(n,r,g,b,hex,or,og,ob) {
                 // remove selection box
                 document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`);
-                if (localStorage.getItem("mode") == 'light') { // for light mode
+                if (localStorage.getItem("xlibcMode") == 'light') { // for light mode
                     document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
                     document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 0px;`); // display actual color
                 } else { // for dark mode
@@ -142,7 +142,7 @@
             function OScolor0(n,r,g,b,hex,or,og,ob) {
                 // remove selection box
                 document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`);
-                if (localStorage.getItem("mode") == 'light') { // for light mode
+                if (localStorage.getItem("xlibcMode") == 'light') { // for light mode
                     document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #000000; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
                     document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #000000; border-color: #000000; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 0px;`); // display actual color
                 } else { // for dark mode
@@ -159,7 +159,7 @@
                 document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`);
                 document.getElementById('osRGB').setAttribute("style","padding: 0px; margin: 0px;");
                 document.getElementById('osRGB').innerHTML = '';
-                if (document.getElementById('mode').innerText == 'Switch to Dark Mode') { // change mode
+                if (localStorage.getItem("xlibcMode") == 'light') { // change mode
                     localStorage.setItem("xlibcMode","dark");
                     darkmode();
                 } else {
@@ -511,12 +511,12 @@
             var oldr = r;
             var oldg = g;
             var oldb = b;
-            var mode = localStorage.getItem("xlibcMode"); // find current mode (if there is one)
-            if (mode == 'dark') { // switch to dark mode
+            if (localStorage.getItem("xlibcMode") == 'dark') { // switch to dark mode
                 darkmode();
             } else { // default mode is light
                 document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0</p>';
                 document.getElementsByTagName("footer")[0].setAttribute("style","background-color: rgb(235,235,235);");
+                localStorage.setItem("xlibcMode","light");
             }
         </script>
     </body>
