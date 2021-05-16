@@ -4,7 +4,7 @@
     Thank you mr womp womp and KMisthebomb for your code suggestions.
     Thank you to anyone else who suggested features and has used this program.
 -->
-<html>
+<html lang="en">
     <head>
         <title>Xlibc Color Picker</title>
         <style type="text/css"> /* CSS styling */
@@ -16,10 +16,6 @@
                 width: 35px;
                 height: 35px;
                 border-style: none;
-            }
-            table td:hover { /* thank you mr womp womp */
-                border: solid black 1px;
-                padding: 0px;
             }
             td.osColors {
                 width: 6.6%;
@@ -38,21 +34,21 @@
                 text-align: center;
                 font-weight: bold;
                 font-size: 300%;
-                padding: 2.5%;
+                padding: 2%;
                 font-family: sans-serif;
                 margin: 40px auto 25px auto;
             }
             p.rgb {
                 text-align: center;
                 font-family: sans-serif;
-                font-size: 50%;
+                font-size: 45%;
                 margin: 0px;
                 padding: 10px 0px 0px 0px;
             }
             p.osRGB {
                 text-align: center;
                 font-family: sans-serif;
-                font-size: 150%;
+                font-size: 125%;
             }
             h1 {
                 margin: 5px 0px 30px 0px;
@@ -83,19 +79,35 @@
         </style>
         <script type="text/javascript">
             // thank you Privacy_Dragon
-            // xlibc colors with white foreground text color
-            function colorf(n,r,g,b,hex) {
+            // display xlibc colors
+            function color(n,r,g,b,hex,c1555) {
                 // remove TI-OS color box
                 document.getElementById('osRGB').setAttribute("style","padding: 0px; margin: 0px;");
                 document.getElementById('osRGB').innerHTML = '';
-                if (localStorage.getItem("xlibcMode") == 'light') { // for light mode
-                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid;`); // display xlibc color
-                } else { // for dark mode
-                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid;`); // display xlibc color
+                if (n > 131 && n % 8 > 3) {
+                    if (localStorage.getItem("xlibcMode") == 'light') { // for light mode
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #000000; border-width: thin; border-style: solid;`); // display xlibc color
+                    } else { // for dark mode
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #ffffff; border-width: thin; border-style: solid;`); // display xlibc color
+                    }
+                } else {
+                    if (localStorage.getItem("xlibcMode") == 'light') { // for light mode
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid;`); // display xlibc color
+                    } else { // for dark mode
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid;`); // display xlibc color
+                    }
                 }
-                document.getElementById('text').innerHTML = `${n}<br>${hex}<p class="rgb">R: ${r} G: ${g} B: ${b}</p>`; // display xlibc values
-                document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`); // remove selection box
-                document.getElementsByTagName('td')[n].setAttribute("style",`background-color: rgb(${r},${g},${b}); border: solid black 1px; padding: 0px;`); // add selection box
+                c1555 = c1555.toString(16).toUpperCase(); // convert the 1555 value
+                // add additional 0's
+                if (c1555.length == 1) c1555 = '0x000' + c1555;
+                else if (c1555.length == 2) c1555 = '0x00' + c1555;
+                else if (c1555.length == 3) c1555 = '0x0' + c1555;
+                else if (c1555.length == 4) c1555 = '0x' + c1555;
+                document.getElementById('text').innerHTML = `${n}<br>${hex}<p class="rgb">R: ${r} G: ${g} B: ${b}<br>1555: ${c1555}</p>`; // display xlibc values
+                if (oldn > 264 && oldn < 270)  document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); color: #000000;`); // remove selection box
+                else document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb});`);
+                if (n > 131 && n % 8 > 3) document.getElementsByTagName('td')[n].setAttribute("style",`background-color: rgb(${r},${g},${b}); border: solid black 1px; padding: 0px;`); // add selection box
+                else document.getElementsByTagName('td')[n].setAttribute("style",`background-color: rgb(${r},${g},${b}); border: solid white 1px; padding: 0px;`);
                 // copy variable values
                 oldn = n;
                 oldr = r;
@@ -103,60 +115,45 @@
                 oldb = b;
             }
 
-            // xlibc colors with black foreground text color
-            function color0(n,r,g,b,hex) {
-                // remove TI-OS color box
-                document.getElementById('osRGB').setAttribute("style","padding: 0px; margin: 0px;");
-                document.getElementById('osRGB').innerHTML = '';
-                if (localStorage.getItem("xlibcMode") == 'light') { // for light mode
-                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #000000; border-width: thin; border-style: solid;`); // display xlibc color
-                } else { // for dark mode
-                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #ffffff; border-width: thin; border-style: solid;`); // display xlibc color
+            // display TI-OS colors
+            function OScolor(n,r,g,b,hex,or,og,ob,tagNum,c1555,OSc1555) {
+                // remove selection box
+                document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb});`);
+                if (tagNum > 264 && tagNum < 270) {
+                    if (localStorage.getItem("xlibcMode") == 'light') { // for light mode
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #000000; border-width: thin; border-style: solid; padding: 0.5% 2%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
+                        document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #000000; border-color: #000000; border-width: thin; border-style: solid; padding: 0.5% 2%; margin: 0px;`); // display actual color
+                    } else { // for dark mode
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #ffffff; border-width: thin; border-style: solid; padding: 0.5% 2%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
+                        document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #000000; border-color: #ffffff; border-width: thin; border-style: solid; padding: 0.5% 2%; margin: 0px;`); // display actual color
+                    }
+                } else {
+                    if (localStorage.getItem("xlibcMode") == 'light') { // for light mode
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid; padding: 0.5% 1%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
+                        document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid; padding: 0.5% 2%; margin: 0px;`); // display actual color
+                    } else { // for dark mode
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid; padding: 0.5% 2%; margin: 30px 0px 0px 0px;`); // display xlibc equivalent
+                        document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid; padding: 0.5% 2%; margin: 0px;`); // display actual color
+                    }
                 }
-                document.getElementById('text').innerHTML = `${n}<br>${hex}<p class="rgb">R: ${r} G: ${g} B: ${b}</p>`; // display xlibc values
-                document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`); // remove selection box
-                document.getElementsByTagName('td')[n].setAttribute("style",`background-color: rgb(${r},${g},${b}); border: solid black 1px; padding: 0px;`); // add selection box
+                document.getElementById('text').innerHTML = `${n}<br>${hex}<p class="rgb">R: ${r} G: ${g} B: ${b}<br>1555: ${c1555}</p>`; // xlibc equivalent color value
+                document.getElementById('osRGB').innerHTML = `R: ${or} G: ${og} B: ${ob}<br>1555: ${OSc1555}`; // display actual rgb value
+                if (oldn > 264 && oldn < 270)  document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); color: #000000;`); // remove selection box
+                else document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb});`);
+                if (tagNum > 264 && tagNum < 270) document.getElementsByTagName('td')[tagNum].setAttribute("style",`background-color: rgb(${or},${og},${ob}); color: #000000; border: solid black 1px; padding: 0px;`); // add selection box
+                else document.getElementsByTagName('td')[tagNum].setAttribute("style",`background-color: rgb(${or},${og},${ob}); border: solid white 1px; padding: 0px;`);
                 // copy variable values
-                oldn = n;
-                oldr = r;
-                oldg = g;
-                oldb = b;
-            }
-
-            // TI-OS colors with white foreground text color
-            function OScolorf(n,r,g,b,hex,or,og,ob) {
-                // remove selection box
-                document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`);
-                if (localStorage.getItem("xlibcMode") == 'light') { // for light mode
-                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
-                    document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #ffffff; border-color: #000000; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 0px;`); // display actual color
-                } else { // for dark mode
-                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
-                    document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 0px;`); // display actual color
-                }
-                document.getElementById('text').innerHTML = `${n}<br>${hex}<p class="rgb">R: ${r} G: ${g} B: ${b}</p>`; // xlibc equivalent color value
-                document.getElementById('osRGB').innerHTML = `R: ${or} G: ${og} B: ${ob}`; // display actual rgb value
-            }
-            
-            // TI-OS colors with bacl foreground text color
-            function OScolor0(n,r,g,b,hex,or,og,ob) {
-                // remove selection box
-                document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`);
-                if (localStorage.getItem("xlibcMode") == 'light') { // for light mode
-                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #000000; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
-                    document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #000000; border-color: #000000; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 0px;`); // display actual color
-                } else { // for dark mode
-                    document.getElementById('text').setAttribute('style',`background-color: rgb(${r},${g},${b}); color: #000000; border-color: #ffffff; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 40px 0px 0px 0px;`); // display xlibc equivalent
-                    document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or},${og},${ob}); color: #000000; border-color: #ffffff; border-width: thin; border-style: solid; padding: 1% 2.5%; margin: 0px;`); // display actual color
-                }
-                document.getElementById('text').innerHTML = `${n}<br>${hex}<p class="rgb">R: ${r} G: ${g} B: ${b}</p>`; // xlibc equivalent color value
-                document.getElementById('osRGB').innerHTML = `R: ${or} G: ${og} B: ${ob}`; // display actual rgb value
+                oldn = tagNum;
+                oldr = or;
+                oldg = og;
+                oldb = ob;
             }
 
             // mode changes
             function changemode() {
                 // restore default positions
-                document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); border: hidden;`);
+                if (oldn > 264 && oldn < 270) document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); color: #000000;`);
+                else document.getElementsByTagName('td')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb});`);
                 document.getElementById('osRGB').setAttribute("style","padding: 0px; margin: 0px;");
                 document.getElementById('osRGB').innerHTML = '';
                 if (localStorage.getItem("xlibcMode") == 'light') { // change mode
@@ -173,11 +170,13 @@
                 document.getElementsByTagName("footer")[0].setAttribute("style","background-color: rgb(235,235,235);"); // change footer background
                 document.getElementById("title").setAttribute("style","color: #000000;"); // change text color
                 document.getElementById("mode").setAttribute("style","color: #000000; float: left;");
+                document.getElementById("copyright").setAttribute("style","color: #808080; float: right; cursor: default;");
                 document.getElementById("mode").innerHTML = 'Switch to Dark Mode'; // change option
                 document.getElementById("OSColors").setAttribute("style","margin: 10px auto; border-color: #000000; border-width: thin; border-style: solid;");
                 document.getElementById("text").setAttribute("style","color: #ffffff; border-color: #000000; border-width: thin; border-style: solid; background-color: rgb(0,0,0);");
-                document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0</p>'; // reset values
+                document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0<br>1555: 0x0000</p>'; // reset values
                 document.getElementById("TI").setAttribute("style","font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px; padding: 0px;"); // change text color
+                document.getElementsByTagName('td')[0].setAttribute('style','background-color: rgb(0,0,0); border: solid white 1px; padding: 0px;'); // draw selection box
             }
 
             function darkmode() { // set to dark mode
@@ -185,321 +184,83 @@
                 document.getElementsByTagName("footer")[0].setAttribute("style","background-color: rgb(40,40,40);"); // change footer background
                 document.getElementById("title").setAttribute("style","color: #ffffff;"); // change text color
                 document.getElementById("mode").setAttribute("style","color: #ffffff; float: left;");
+                document.getElementById("copyright").setAttribute("style","color: #b3b3b3; float: right; cursor: default;");
                 document.getElementById("mode").innerHTML = 'Switch to Light Mode'; // change option
                 document.getElementById("OSColors").setAttribute("style","margin: 10px auto; border-color: #ffffff; border-width: thin; border-style: solid;"); // change border color
                 document.getElementById("text").setAttribute("style","color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid; background-color: rgb(0,0,0);");
-                document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0</p>'; // reset values
+                document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0<br>1555: 0x0000</p>'; // reset values
                 document.getElementById("TI").setAttribute("style","font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px; padding: 0px; color: #ffffff;"); // change text color
+                document.getElementsByTagName('td')[0].setAttribute('style','background-color: rgb(0,0,0); border: solid white 1px; padding: 0px;'); // draw selection box
+            }
+
+            // draw hover box
+            function hover(red,green,blue,tagNum) {
+                if ((oldHover != oldn) && oldHover < 256) document.getElementsByTagName('td')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR},${oldHoverG},${oldHoverB});`);
+                if ((oldHover != oldn) && oldHover > 255) {
+                    if (oldHover > 264 && oldHover < 270) document.getElementsByTagName('td')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR},${oldHoverG},${oldHoverB}); color: #000000;`);
+                    else document.getElementsByTagName('td')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR},${oldHoverG},${oldHoverB}); color: #ffffff;`);
+                }
+                if (((tagNum > 131 && tagNum % 8 > 3) && tagNum < 256) || tagNum > 264 && tagNum < 270) document.getElementsByTagName('td')[tagNum].setAttribute('style',`background-color: rgb(${red},${green},${blue}); border: solid black 1px; padding: 0px; color: #000000;`);
+                else document.getElementsByTagName('td')[tagNum].setAttribute('style',`background-color: rgb(${red},${green},${blue}); border: solid white 1px; padding: 0px;`);
+                oldHover = tagNum;
+                oldHoverR = red;
+                oldHoverG = green;
+                oldHoverB = blue;
+            }
+
+            function onMouseOut() { // when not over a table
+                if ((oldHover != oldn) && oldHover < 256) document.getElementsByTagName('td')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR},${oldHoverG},${oldHoverB});`);
+                if ((oldHover != oldn) && oldHover > 255) {
+                    if (oldHover > 264 && oldHover < 270) document.getElementsByTagName('td')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR},${oldHoverG},${oldHoverB}); color: #000000;`);
+                    else document.getElementsByTagName('td')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR},${oldHoverG},${oldHoverB}); color: #ffffff;`);
+                }
             }
         </script>
     </head>
     <body id="background">
         <h3 id="mode" onclick="changemode()" style="float: left;">Switch to Dark Mode</h3> <!-- mode selector -->
+        <h3 id="copyright" style="color: #808080; float: right; cursor: default;">&copy; 2021 RoccoLox Programs</h3>
         <br>
         <h1 id="title">Xlibc Color Picker</h1>
-        <table cellspacing=0>
-            <tr>
-                <td style="background-color: rgb(0,0,0);" onclick="colorf(0,0,0,0,'0x00')"></td>
-                <td style="background-color: rgb(0,32,8);" onclick="colorf(1,0,32,8,'0x01')"></td>
-                <td style="background-color: rgb(0,65,16);" onclick="colorf(2,0,65,16,'0x02')"></td>
-                <td style="background-color: rgb(0,97,24);" onclick="colorf(3,0,97,24,'0x03')"></td>
-                <td style="background-color: rgb(0,130,32);" onclick="colorf(4,0,130,32,'0x04')"></td>
-                <td style="background-color: rgb(0,162,40);" onclick="colorf(5,0,162,40,'0x05')"></td>
-                <td style="background-color: rgb(0,195,48);" onclick="colorf(6,0,195,48,'0x06')"></td>
-                <td style="background-color: rgb(0,227,56);" onclick="colorf(7,0,227,56,'0x07')"></td>
-                <td style="background-color: rgb(8,0,65);" onclick="colorf(8,8,0,65,'0x08')"></td>
-                <td style="background-color: rgb(8,32,73);" onclick="colorf(9,8,32,73,'0x09')"></td>
-                <td style="background-color: rgb(8,65,81);" onclick="colorf(10,8,65,81,'0x0A')"></td>
-                <td style="background-color: rgb(8,97,89);" onclick="colorf(11,8,97,89,'0x0B')"></td>
-                <td style="background-color: rgb(8,130,97);" onclick="colorf(12,8,130,97,'0x0C')"></td>
-                <td style="background-color: rgb(8,162,105);" onclick="colorf(13,8,162,105,'0x0D')"></td>
-                <td style="background-color: rgb(8,195,113);" onclick="colorf(14,8,195,113,'0x0E')"></td>
-                <td style="background-color: rgb(8,227,121);" onclick="colorf(15,8,227,121,'0x0F')"></td>
-                <td style="background-color: rgb(16,0,134);" onclick="colorf(16,16,0,134,'0x10')"></td>
-                <td style="background-color: rgb(16,32,142);" onclick="colorf(17,16,32,142,'0x11')"></td>
-                <td style="background-color: rgb(16,65,150);" onclick="colorf(18,16,65,150,'0x12')"></td>
-                <td style="background-color: rgb(16,97,158);" onclick="colorf(19,16,97,158,'0x13')"></td>
-                <td style="background-color: rgb(16,130,166);" onclick="colorf(20,16,130,166,'0x14')"></td>
-                <td style="background-color: rgb(16,162,174);" onclick="colorf(21,16,162,174,'0x15')"></td>
-                <td style="background-color: rgb(16,195,182);" onclick="colorf(22,16,195,182,'0x16')"></td>
-                <td style="background-color: rgb(16,227,190);" onclick="colorf(23,16,227,190,'0x17')"></td>
-                <td style="background-color: rgb(24,0,199);" onclick="colorf(24,24,0,199,'0x18')"></td>
-                <td style="background-color: rgb(24,32,207);" onclick="colorf(25,24,32,207,'0x19')"></td>
-                <td style="background-color: rgb(24,65,215);" onclick="colorf(26,24,65,215,'0x1A')"></td>
-                <td style="background-color: rgb(24,97,223);" onclick="colorf(27,24,97,223,'0x1B')"></td>
-                <td style="background-color: rgb(24,130,231);" onclick="colorf(28,24,130,231,'0x1C')"></td>
-                <td style="background-color: rgb(24,162,239);" onclick="colorf(29,24,162,239,'0x1D')"></td>
-                <td style="background-color: rgb(24,195,247);" onclick="colorf(30,24,195,247,'0x1E')"></td>
-                <td style="background-color: rgb(24,227,255);" onclick="colorf(31,24,227,255,'0x1F')"></td>
-            </tr>
-            <tr>
-                <td style="background-color: rgb(32,4,0);" onclick="colorf(32,32,4,0,'0x20')"></td>
-                <td style="background-color: rgb(32,36,8);" onclick="colorf(33,32,36,8,'0x21')"></td>
-                <td style="background-color: rgb(32,69,16);" onclick="colorf(34,32,69,16,'0x22')"></td>
-                <td style="background-color: rgb(32,101,24);" onclick="colorf(35,32,101,24,'0x23')"></td>
-                <td style="background-color: rgb(32,134,32);" onclick="colorf(36,32,134,32,'0x24')"></td>
-                <td style="background-color: rgb(32,166,40);" onclick="colorf(37,32,166,40,'0x25')"></td>
-                <td style="background-color: rgb(32,199,48);" onclick="colorf(38,32,199,48,'0x26')"></td>
-                <td style="background-color: rgb(32,231,56);" onclick="colorf(39,32,231,56,'0x27')"></td>
-                <td style="background-color: rgb(40,4,65);" onclick="colorf(40,40,4,65,'0x28')"></td>
-                <td style="background-color: rgb(40,36,73);" onclick="colorf(41,40,36,73,'0x29')"></td>
-                <td style="background-color: rgb(40,69,81);" onclick="colorf(42,40,69,81,'0x2A')"></td>
-                <td style="background-color: rgb(40,101,89);" onclick="colorf(43,40,101,89,'0x2B')"></td>
-                <td style="background-color: rgb(40,134,97);" onclick="colorf(44,40,134,97,'0x2C')"></td>
-                <td style="background-color: rgb(40,166,105);" onclick="colorf(45,40,166,105,'0x2D')"></td>
-                <td style="background-color: rgb(40,199,113);" onclick="colorf(46,40,199,113,'0x2E')"></td>
-                <td style="background-color: rgb(40,231,121);" onclick="colorf(47,40,231,121,'0x2F')"></td>
-                <td style="background-color: rgb(48,4,134);" onclick="colorf(48,48,4,134,'0x30')"></td>
-                <td style="background-color: rgb(48,36,142);" onclick="colorf(49,48,36,142,'0x31')"></td>
-                <td style="background-color: rgb(48,69,150);" onclick="colorf(50,48,69,150,'0x32')"></td>
-                <td style="background-color: rgb(48,101,158);" onclick="colorf(51,48,101,158,'0x33')"></td>
-                <td style="background-color: rgb(48,134,166);" onclick="colorf(52,48,134,166,'0x34')"></td>
-                <td style="background-color: rgb(48,166,174);" onclick="colorf(53,48,166,174,'0x35')"></td>
-                <td style="background-color: rgb(48,199,182);" onclick="colorf(54,48,199,182,'0x36')"></td>
-                <td style="background-color: rgb(48,231,190);" onclick="colorf(55,48,231,190,'0x37')"></td>
-                <td style="background-color: rgb(56,4,199);" onclick="colorf(56,56,4,199,'0x38')"></td>
-                <td style="background-color: rgb(56,36,207);" onclick="colorf(57,56,36,207,'0x39')"></td>
-                <td style="background-color: rgb(56,69,215);" onclick="colorf(58,56,69,215,'0x3A')"></td>
-                <td style="background-color: rgb(56,101,223);" onclick="colorf(59,56,101,223,'0x3B')"></td>
-                <td style="background-color: rgb(56,134,231);" onclick="colorf(60,56,134,231,'0x3C')"></td>
-                <td style="background-color: rgb(56,166,239);" onclick="colorf(61,56,166,239,'0x3D')"></td>
-                <td style="background-color: rgb(56,199,247);" onclick="colorf(62,56,199,247,'0x3E')"></td>
-                <td style="background-color: rgb(56,231,255);" onclick="colorf(63,56,231,255,'0x3F')"></td>
-            </tr>
-            <tr>
-                <td style="background-color: rgb(65,8,0);" onclick="colorf(64,65,8,0,'0x40')"></td>
-                <td style="background-color: rgb(65,40,8);" onclick="colorf(65,65,40,8,'0x41')"></td>
-                <td style="background-color: rgb(65,73,16);" onclick="colorf(66,65,73,16,'0x42')"></td>
-                <td style="background-color: rgb(65,105,24);" onclick="colorf(67,65,105,24,'0x43')"></td>
-                <td style="background-color: rgb(65,138,32);" onclick="colorf(68,65,138,32,'0x44')"></td>
-                <td style="background-color: rgb(65,170,40);" onclick="colorf(69,65,170,40,'0x45')"></td>
-                <td style="background-color: rgb(65,203,48);" onclick="colorf(70,65,203,48,'0x46')"></td>
-                <td style="background-color: rgb(65,235,56);" onclick="colorf(71,65,235,56,'0x47')"></td>
-                <td style="background-color: rgb(73,8,65);" onclick="colorf(72,73,8,65,'0x48')"></td>
-                <td style="background-color: rgb(73,40,73);" onclick="colorf(73,73,40,73,'0x49')"></td>
-                <td style="background-color: rgb(73,73,81);" onclick="colorf(74,73,73,81,'0x4A')"></td>
-                <td style="background-color: rgb(73,105,89);" onclick="colorf(75,73,105,89,'0x4B')"></td>
-                <td style="background-color: rgb(73,138,97);" onclick="colorf(76,73,138,97,'0x4C')"></td>
-                <td style="background-color: rgb(73,170,105);" onclick="colorf(77,73,170,105,'0x4D')"></td>
-                <td style="background-color: rgb(73,203,113);" onclick="colorf(78,73,203,113,'0x04E')"></td>
-                <td style="background-color: rgb(73,235,121);" onclick="colorf(79,73,235,121,'0x4F')"></td>
-                <td style="background-color: rgb(81,8,134);" onclick="colorf(80,81,8,134,'0x50')"></td>
-                <td style="background-color: rgb(81,40,142);" onclick="colorf(81,81,40,142,'0x51')"></td>
-                <td style="background-color: rgb(81,73,150);" onclick="colorf(82,81,73,150,'0x52')"></td>
-                <td style="background-color: rgb(81,105,158);" onclick="colorf(83,81,105,158,'0x53')"></td>
-                <td style="background-color: rgb(81,138,166);" onclick="colorf(84,81,138,166,'0x54')"></td>
-                <td style="background-color: rgb(81,170,174);" onclick="colorf(85,81,170,174,'0x55')"></td>
-                <td style="background-color: rgb(81,203,182);" onclick="colorf(86,81,203,182,'0x56')"></td>
-                <td style="background-color: rgb(81,235,190);" onclick="colorf(87,81,235,190,'0x57')"></td>
-                <td style="background-color: rgb(89,8,199);" onclick="colorf(88,89,8,199,'0x58')"></td>
-                <td style="background-color: rgb(89,40,207);" onclick="colorf(89,89,40,207,'0x59')"></td>
-                <td style="background-color: rgb(89,73,215);" onclick="colorf(90,89,73,215,'0x5A')"></td>
-                <td style="background-color: rgb(89,105,223);" onclick="colorf(91,89,105,223,'0x5B')"></td>
-                <td style="background-color: rgb(89,138,231);" onclick="colorf(92,89,138,231,'0x5C')"></td>
-                <td style="background-color: rgb(89,170,239);" onclick="colorf(93,89,170,239,'0x5D')"></td>
-                <td style="background-color: rgb(89,203,247);" onclick="colorf(94,89,203,247,'0x5E')"></td>
-                <td style="background-color: rgb(89,235,255);" onclick="colorf(95,89,235,255,'0x5F')"></td>
-            </tr>
-            <tr>
-                <td style="background-color: rgb(97,12,0);" onclick="colorf(96,97,12,0,'0x60')"></td>
-                <td style="background-color: rgb(97,44,8);" onclick="colorf(97,97,44,8,'0x61')"></td>
-                <td style="background-color: rgb(97,77,16);" onclick="colorf(98,97,77,16,'0x62')"></td>
-                <td style="background-color: rgb(97,109,24);" onclick="colorf(99,97,109,24,'0x63')"></td>
-                <td style="background-color: rgb(97,142,32);" onclick="colorf(100,97,142,32,'0x64')"></td>
-                <td style="background-color: rgb(97,174,40);" onclick="colorf(101,97,174,40,'0x65')"></td>
-                <td style="background-color: rgb(97,207,48);" onclick="colorf(102,97,207,48,'0x66')"></td>
-                <td style="background-color: rgb(97,239,56);" onclick="colorf(103,97,239,56,'0x67')"></td>
-                <td style="background-color: rgb(105,12,65);" onclick="colorf(104,105,12,65,'0x68')"></td>
-                <td style="background-color: rgb(105,44,73);" onclick="colorf(105,105,44,73,'0x69')"></td>
-                <td style="background-color: rgb(105,77,81);" onclick="colorf(106,105,77,81,'0x6A')"></td>
-                <td style="background-color: rgb(105,109,89);" onclick="colorf(107,105,109,89,'0x6B')"></td>
-                <td style="background-color: rgb(105,142,97);" onclick="colorf(108,105,142,97,'0x6C')"></td>
-                <td style="background-color: rgb(105,174,105);" onclick="colorf(109,105,174,105,'0x6D')"></td>
-                <td style="background-color: rgb(105,207,113);" onclick="colorf(110,105,207,113,'0x6E')"></td>
-                <td style="background-color: rgb(105,239,121);" onclick="colorf(111,105,239,121,'0x6F')"></td>
-                <td style="background-color: rgb(113,12,134);" onclick="colorf(112,113,12,134,'0x70')"></td>
-                <td style="background-color: rgb(113,44,142);" onclick="colorf(113,113,44,142,'0x71')"></td>
-                <td style="background-color: rgb(113,77,150);" onclick="colorf(114,113,77,150,'0x72')"></td>
-                <td style="background-color: rgb(113,109,158);" onclick="colorf(115,113,109,158,'0x73')"></td>
-                <td style="background-color: rgb(113,142,166);" onclick="colorf(116,113,142,166,'0x74')"></td>
-                <td style="background-color: rgb(113,174,174);" onclick="colorf(117,113,174,174,'0x75')"></td>
-                <td style="background-color: rgb(113,207,182);" onclick="colorf(118,113,207,182,'0x76')"></td>
-                <td style="background-color: rgb(113,239,190);" onclick="colorf(119,113,239,190,'0x77')"></td>
-                <td style="background-color: rgb(121,12,199);" onclick="colorf(120,121,12,199,'0x78')"></td>
-                <td style="background-color: rgb(121,44,207);" onclick="colorf(121,121,44,207,'0x79')"></td>
-                <td style="background-color: rgb(121,77,215);" onclick="colorf(122,121,77,215,'0x7A')"></td>
-                <td style="background-color: rgb(121,109,223);" onclick="colorf(123,121,109,223,'0x7B')"></td>
-                <td style="background-color: rgb(121,142,231);" onclick="colorf(124,121,142,231,'0x7C')"></td>
-                <td style="background-color: rgb(121,174,239);" onclick="colorf(125,121,174,239,'0x7D')"></td>
-                <td style="background-color: rgb(121,207,247);" onclick="colorf(126,121,207,247,'0x7E')"></td>
-                <td style="background-color: rgb(121,239,255);" onclick="colorf(127,121,239,255,'0x7F')"></td>
-            </tr>
-            <tr>
-                <td style="background-color: rgb(134,16,0);" onclick="colorf(128,134,16,0,'0x80')"></td>
-                <td style="background-color: rgb(134,48,8);" onclick="colorf(129,134,48,8,'0x81')"></td>
-                <td style="background-color: rgb(134,81,16);" onclick="colorf(130,134,81,16,'0x82')"></td>
-                <td style="background-color: rgb(134,113,24);" onclick="colorf(131,134,113,24,'0x83')"></td>
-                <td style="background-color: rgb(134,146,32);" onclick="colorf(132,134,146,32,'0x84')"></td>
-                <td style="background-color: rgb(134,178,40);" onclick="color0(133,134,178,40,'0x85')"></td>
-                <td style="background-color: rgb(134,211,48);" onclick="color0(134,134,211,48,'0x86')"></td>
-                <td style="background-color: rgb(134,243,56);" onclick="color0(135,134,243,56,'0x87')"></td>
-                <td style="background-color: rgb(142,16,65);" onclick="colorf(136,142,16,65,'0x88')"></td>
-                <td style="background-color: rgb(142,48,73);" onclick="colorf(137,142,48,73,'0x89')"></td>
-                <td style="background-color: rgb(142,81,81);" onclick="colorf(138,142,81,81,'0x8A')"></td>
-                <td style="background-color: rgb(142,113,89);" onclick="colorf(139,142,113,89,'0x8B')"></td>
-                <td style="background-color: rgb(142,147,97);" onclick="colorf(140,142,147,97,'0x8C')"></td>
-                <td style="background-color: rgb(142,178,105);" onclick="color0(141,142,178,105,'0x8D')"></td>
-                <td style="background-color: rgb(142,211,113);" onclick="color0(142,142,211,113,'0x8E')"></td>
-                <td style="background-color: rgb(142,243,121);" onclick="color0(143,142,243,121,'0x8F')"></td>
-                <td style="background-color: rgb(150,16,134);" onclick="colorf(144,150,16,134,'0x90')"></td>
-                <td style="background-color: rgb(150,48,142);" onclick="colorf(145,150,48,142,'0x91')"></td>
-                <td style="background-color: rgb(150,81,150);" onclick="colorf(146,150,81,150,'0x92')"></td>
-                <td style="background-color: rgb(150,113,158);" onclick="colorf(147,150,113,158,'0x93')"></td>
-                <td style="background-color: rgb(150,146,166);" onclick="colorf(148,150,146,166,'0x94')"></td>
-                <td style="background-color: rgb(150,178,174);" onclick="color0(149,150,178,174,'0x95')"></td>
-                <td style="background-color: rgb(150,211,182);" onclick="color0(150,150,211,182,'0x96')"></td>
-                <td style="background-color: rgb(150,243,190);" onclick="color0(151,150,243,190,'0x97')"></td>
-                <td style="background-color: rgb(158,16,199);" onclick="colorf(152,158,16,199,'0x98')"></td>
-                <td style="background-color: rgb(158,48,207);" onclick="colorf(153,158,48,207,'0x99')"></td>
-                <td style="background-color: rgb(158,81,215);" onclick="colorf(154,158,81,215,'0x9A')"></td>
-                <td style="background-color: rgb(158,113,223);" onclick="colorf(155,158,113,223,'0x9B')"></td>
-                <td style="background-color: rgb(158,146,231);" onclick="colorf(156,158,146,231,'0x9C')"></td>
-                <td style="background-color: rgb(158,179,239);" onclick="color0(157,158,179,239,'0x9D')"></td>
-                <td style="background-color: rgb(158,211,247);" onclick="color0(158,158,211,247,'0x9E')"></td>
-                <td style="background-color: rgb(158,243,255);" onclick="color0(159,158,243,255,'0x9F')"></td>
-            </tr>
-            <tr>
-                <td style="background-color: rgb(166,20,0);" onclick="colorf(160,166,20,0,'0xA0')"></td>
-                <td style="background-color: rgb(166,52,8);" onclick="colorf(161,166,52,8,'0xA1')"></td>
-                <td style="background-color: rgb(166,85,16);" onclick="colorf(162,166,85,16,'0xA2')"></td>
-                <td style="background-color: rgb(166,117,24);" onclick="colorf(163,166,117,24,'0xA3')"></td>
-                <td style="background-color: rgb(166,150,32);" onclick="colorf(164,166,150,32,'0xA4')"></td>
-                <td style="background-color: rgb(166,182,40);" onclick="color0(165,166,182,40,'0xA5')"></td>
-                <td style="background-color: rgb(166,215,48);" onclick="color0(166,166,215,48,'0xA6')"></td>
-                <td style="background-color: rgb(166,247,56);" onclick="color0(167,166,247,56,'0xA7')"></td>
-                <td style="background-color: rgb(174,20,65);" onclick="colorf(168,174,20,65,'0xA8')"></td>
-                <td style="background-color: rgb(174,52,73);" onclick="colorf(169,174,52,73,'0xA9')"></td>
-                <td style="background-color: rgb(174,85,81);" onclick="colorf(170,174,85,81,'0xAA')"></td>
-                <td style="background-color: rgb(174,117,89);" onclick="colorf(171,174,117,89,'0xAB')"></td>
-                <td style="background-color: rgb(174,150,97);" onclick="colorf(172,174,150,97,'0xAC')"></td>
-                <td style="background-color: rgb(174,182,105);" onclick="color0(173,174,182,105,'0xAD')"></td>
-                <td style="background-color: rgb(174,215,113);" onclick="color0(174,174,215,113,'0xAE')"></td>
-                <td style="background-color: rgb(174,247,121);" onclick="color0(175,174,247,121,'0xAF')"></td>
-                <td style="background-color: rgb(182,20,134);" onclick="colorf(176,182,20,134,'0xB0')"></td>
-                <td style="background-color: rgb(182,52,142);" onclick="colorf(177,182,52,142,'0xB1')"></td>
-                <td style="background-color: rgb(182,85,150);" onclick="colorf(178,182,85,150,'0xB2')"></td>
-                <td style="background-color: rgb(182,117,158);" onclick="colorf(179,182,117,158,'0xB3')"></td>
-                <td style="background-color: rgb(182,150,166);" onclick="colorf(180,182,150,166,'0xB4')"></td>
-                <td style="background-color: rgb(182,182,174);" onclick="color0(181,182,182,174,'0xB5')"></td>
-                <td style="background-color: rgb(182,215,182);" onclick="color0(182,182,215,182,'0xB6')"></td>
-                <td style="background-color: rgb(182,247,190);" onclick="color0(183,182,247,190,'0xB7')"></td>
-                <td style="background-color: rgb(190,20,199);" onclick="colorf(184,190,20,199,'0xB8')"></td>
-                <td style="background-color: rgb(190,52,207);" onclick="colorf(185,190,52,207,'0xB9')"></td>
-                <td style="background-color: rgb(190,85,215);" onclick="colorf(186,190,85,215,'0xBA')"></td>
-                <td style="background-color: rgb(190,117,223);" onclick="colorf(187,190,117,223,'0xBB')"></td>
-                <td style="background-color: rgb(190,150,231);" onclick="colorf(188,190,150,231,'0xBC')"></td>
-                <td style="background-color: rgb(190,182,239);" onclick="color0(189,190,182,239,'0xBD')"></td>
-                <td style="background-color: rgb(190,215,247);" onclick="color0(190,190,215,247,'0xBE')"></td>
-                <td style="background-color: rgb(190,247,255);" onclick="color0(191,190,247,255,'0xBF')"></td>
-            </tr>
-            <tr>
-                <td style="background-color: rgb(199,24,0);" onclick="colorf(192,199,24,0,'0xC0')"></td>
-                <td style="background-color: rgb(199,56,8);" onclick="colorf(193,199,56,8,'0xC1')"></td>
-                <td style="background-color: rgb(199,89,16);" onclick="colorf(194,199,89,16,'0xC2')"></td>
-                <td style="background-color: rgb(199,121,24);" onclick="colorf(195,199,121,24,'0xC3')"></td>
-                <td style="background-color: rgb(199,154,32);" onclick="colorf(196,199,154,32,'0xC4')"></td>
-                <td style="background-color: rgb(199,186,40);" onclick="color0(197,199,186,40,'0xC5')"></td>
-                <td style="background-color: rgb(199,219,48);" onclick="color0(198,199,219,48,'0xC6')"></td>
-                <td style="background-color: rgb(199,251,56);" onclick="color0(199,199,251,56,'0xC7')"></td>
-                <td style="background-color: rgb(204,24,65);" onclick="colorf(200,204,24,65,'0xC8')"></td>
-                <td style="background-color: rgb(204,56,73);" onclick="colorf(201,204,56,73,'0xC9')"></td>
-                <td style="background-color: rgb(204,89,81);" onclick="colorf(202,204,89,81,'0xCA')"></td>
-                <td style="background-color: rgb(204,121,89);" onclick="colorf(203,204,121,89,'0xCB')"></td>
-                <td style="background-color: rgb(204,154,97);" onclick="colorf(204,204,154,97,'0xCC')"></td>
-                <td style="background-color: rgb(204,186,105);" onclick="color0(205,204,186,105,'0xCD')"></td>
-                <td style="background-color: rgb(204,219,113);" onclick="color0(206,204,219,113,'0xCE')"></td>
-                <td style="background-color: rgb(204,251,121);" onclick="color0(207,204,251,121,'0xCF')"></td>
-                <td style="background-color: rgb(215,24,134);" onclick="colorf(208,215,24,134,'0xD0')"></td>
-                <td style="background-color: rgb(215,56,142);" onclick="colorf(209,215,56,142,'0xD1')"></td>
-                <td style="background-color: rgb(215,89,150);" onclick="colorf(210,215,89,150,'0xD2')"></td>
-                <td style="background-color: rgb(215,121,158);" onclick="colorf(211,215,121,158,'0xD3')"></td>
-                <td style="background-color: rgb(215,154,166);" onclick="colorf(212,215,154,166,'0xD4')"></td>
-                <td style="background-color: rgb(215,186,174);" onclick="color0(213,215,186,174,'0xD5')"></td>
-                <td style="background-color: rgb(215,219,182);" onclick="color0(214,215,219,182,'0xD6')"></td>
-                <td style="background-color: rgb(215,251,190);" onclick="color0(215,215,251,190,'0xD7')"></td>
-                <td style="background-color: rgb(223,24,199);" onclick="colorf(216,223,24,199,'0xD8')"></td>
-                <td style="background-color: rgb(223,56,207);" onclick="colorf(217,223,56,207,'0xD9')"></td>
-                <td style="background-color: rgb(223,89,215);" onclick="colorf(218,223,89,215,'0xDA')"></td>
-                <td style="background-color: rgb(223,121,223);" onclick="colorf(219,223,121,223,'0xDB')"></td>
-                <td style="background-color: rgb(223,154,231);" onclick="colorf(220,223,154,231,'0xDC')"></td>
-                <td style="background-color: rgb(223,186,239);" onclick="color0(221,223,186,239,'0xDD')"></td>
-                <td style="background-color: rgb(223,219,247);" onclick="color0(222,223,219,247,'0xDE')"></td>
-                <td style="background-color: rgb(223,251,255);" onclick="color0(223,223,251,255,'0xDF')"></td>
-            </tr>
-            <tr>
-                <td style="background-color: rgb(231,28,0);" onclick="colorf(224,231,28,0,'0xE0')"></td>
-                <td style="background-color: rgb(231,60,8);" onclick="colorf(225,231,60,8,'0xE1')"></td>
-                <td style="background-color: rgb(231,93,16);" onclick="colorf(226,231,93,16,'0xE2')"></td>
-                <td style="background-color: rgb(231,125,24);" onclick="colorf(227,231,125,24,'0xE3')"></td>
-                <td style="background-color: rgb(231,158,32);" onclick="colorf(228,231,158,32,'0xE4')"></td>
-                <td style="background-color: rgb(231,190,40);" onclick="color0(229,231,190,40,'0xE5')"></td>
-                <td style="background-color: rgb(231,223,48);" onclick="color0(230,231,223,48,'0xE6')"></td>
-                <td style="background-color: rgb(231,255,56);" onclick="color0(231,231,255,56,'0xE7')"></td>
-                <td style="background-color: rgb(239,28,65);" onclick="colorf(232,239,28,65,'0xE8')"></td>
-                <td style="background-color: rgb(239,60,73);" onclick="colorf(233,239,60,73,'0xE9')"></td>
-                <td style="background-color: rgb(239,93,81);" onclick="colorf(234,239,93,81,'0xEA')"></td>
-                <td style="background-color: rgb(239,125,89);" onclick="colorf(235,239,125,89,'0xEB')"></td>
-                <td style="background-color: rgb(239,158,97);" onclick="colorf(236,239,158,97,'0xEC')"></td>
-                <td style="background-color: rgb(239,190,105);" onclick="color0(237,239,190,105,'0xED')"></td>
-                <td style="background-color: rgb(239,223,113);" onclick="color0(238,239,223,113,'0xEE')"></td>
-                <td style="background-color: rgb(239,255,121);" onclick="color0(239,239,255,121,'0xEF')"></td>
-                <td style="background-color: rgb(247,28,134);" onclick="colorf(240,247,28,134,'0xF0')"></td>
-                <td style="background-color: rgb(247,60,142);" onclick="colorf(241,247,60,142,'0xF1')"></td>
-                <td style="background-color: rgb(247,93,150);" onclick="colorf(242,247,93,150,'0xF2')"></td>
-                <td style="background-color: rgb(247,125,158);" onclick="colorf(243,247,125,158,'0xF3')"></td>
-                <td style="background-color: rgb(247,158,166);" onclick="colorf(244,247,158,166,'0xF4')"></td>
-                <td style="background-color: rgb(247,190,174);" onclick="color0(245,247,190,174,'0xF5')"></td>
-                <td style="background-color: rgb(247,223,182);" onclick="color0(246,247,223,182,'0xF6')"></td>
-                <td style="background-color: rgb(247,255,190);" onclick="color0(247,247,255,190,'0xF7')"></td>
-                <td style="background-color: rgb(255,28,199);" onclick="colorf(248,255,28,199,'0xF8')"></td>
-                <td style="background-color: rgb(255,60,207);" onclick="colorf(249,255,60,207,'0xF9')"></td>
-                <td style="background-color: rgb(255,93,215);" onclick="colorf(250,255,93,215,'0xFA')"></td>
-                <td style="background-color: rgb(255,125,223);" onclick="colorf(251,255,125,223,'0xFB')"></td>
-                <td style="background-color: rgb(255,158,231);" onclick="colorf(252,255,158,231,'0xFC')"></td>
-                <td style="background-color: rgb(255,190,239);" onclick="color0(253,255,190,239,'0xFD')"></td>
-                <td style="background-color: rgb(255,223,247);" onclick="color0(254,255,223,247,'0xFE')"></td>
-                <td style="background-color: rgb(255,255,255);" onclick="color0(255,255,255,255,'0xFF')"></td>
-            </tr>
+        <table cellspacing=0 onmouseout="onMouseOut()">
+            <tr id="row0"></tr>
+            <tr id="row1"></tr>
+            <tr id="row2"></tr>
+            <tr id="row3"></tr>
+            <tr id="row4"></tr>
+            <tr id="row5"></tr>
+            <tr id="row6"></tr>
+            <tr id="row7"></tr>
         </table>
         <p id="text" style="background-color: #000000; color: #ffffff; border-color: #000000; border-width: thin; border-style: solid;">
             0<br>0x00
         </p>
         <p class="osRGB" id="osRGB" style="padding: 0px; margin: 0px;"></p> <!-- for displaying TI-OS color values -->
-        <table id="OSColors" style="margin: 10px auto; border-color: #000000; border-width: thin; border-style: solid;" cellspacing=0>
+        <table id="OSColors" style="margin: 10px auto; border-color: #000000; border-width: thin; border-style: solid;" cellspacing=0 onmouseout="onMouseOut()">
             <tr>
-                <td class="osColors" style="background-color: rgb(0,0,255);" onclick="OScolorf('~25',24,32,207,'0x19',0,0,225)">BLUE</td>
-                <td class="osColors" style="background-color: rgb(255,0,0);" onclick="OScolorf('~224',231,28,0,'0xE0',255,0,0)">RED</td>
-                <td class="osColors" style="background-color: rgb(0,0,0);" onclick="OScolorf('0',0,0,0,'0x00',0,0,0)">BLACK</td>
-                <td class="osColors" style="background-color: rgb(255,0,255);" onclick="OScolorf('~249',255,60,207,'0xF9',255,0,255)">MAGENTA</td>
-                <td class="osColors" style="background-color: rgb(0,158,0);" onclick="OScolorf('~5',0,162,40,'0x05',0,158,0)">GREEN</td>
-                <td class="osColors" style="background-color: rgb(255,132,42);" onclick="OScolorf('~227',231,125,24,'0xE3',255,132,42)">ORANGE</td>
-                <td class="osColors" style="background-color: rgb(182,32,0);" onclick="OScolorf('~160',166,20,0,'0xA0',182,32,0)">BROWN</td>
-                <td class="osColors" style="background-color: rgb(0,0,134);" onclick="OScolorf('~16',16,0,134,'0x10',0,0,134)">NAVY</td>
-                <td class="osColors" style="background-color: rgb(0,146,255);" onclick="OScolorf('~28',24,130,231,'0x1C',0,146,255)">LTBLUE</td>
-                <td class="osColors" style="background-color: rgb(255,255,0); color: #000000;" onclick="OScolor0('~231',231,255,56,'0xE7',255,255,0)">YELLOW</td>
-                <td class="osColors" style="background-color: rgb(255,255,255); color: #000000;" onclick="OScolor0('255',255,255,255,'0xFF',255,255,255)">WHITE</td>
-                <td class="osColors" style="background-color: rgb(231,227,231); color: #000000;" onclick="OScolor0('~222',223,219,247,'0xDE',231,227,231)">LTGRAY</td>
-                <td class="osColors" style="background-color: rgb(199,195,199); color: #000000;" onclick="OScolor0('No known',199,195,199,'close matches',199,195,199)">MEDGRAY</td>
-                <td class="osColors" style="background-color: rgb(142,138,142); color: #000000;" onclick="OScolor0('No known',142,138,142,'close matches',142,138,142)">GRAY</td>
-                <td class="osColors" style="background-color: rgb(81,85,81);" onclick="OScolorf('~74',73,73,81,'0x4A',81,85,81)">DARKGRAY</td>
+                <td class="osColors" style="background-color: rgb(0,0,255);" onclick="OScolor('~25',24,32,200,'0x19',0,0,225,256,'0x0C99','0x001F')" onmouseover="hover(0,0,255,256)">BLUE</td>
+                <td class="osColors" style="background-color: rgb(255,0,0);" onclick="OScolor('~224',224,28,0,'0xE0',255,0,0,257,'0x7060','0x7C00')" onmouseover="hover(255,0,0,257)">RED</td>
+                <td class="osColors" style="background-color: rgb(0,0,0);" onclick="OScolor('0',0,0,0,'0x00',0,0,0,258,'0x0000','0x0000')" onmouseover="hover(0,0,0,258)">BLACK</td>
+                <td class="osColors" style="background-color: rgb(255,0,255);" onclick="OScolor('~249',248,60,200,'0xF9',255,0,255,259,'0x7CF9','0x7C1F')" onmouseover="hover(255,0,255,259)">MAGENTA</td>
+                <td class="osColors" style="background-color: rgb(0,158,0);" onclick="OScolor('~5',0,160,40,'0x05',0,158,0,260,'0x0285','0x0260')" onmouseover="hover(0,158,0,260)">GREEN</td>
+                <td class="osColors" style="background-color: rgb(255,132,42);" onclick="OScolor('~227',224,124,24,'0xE3',255,132,42,261,'0x71E3','0x7E05')" onmouseover="hover(255,132,42,261)">ORANGE</td>
+                <td class="osColors" style="background-color: rgb(182,32,0);" onclick="OScolor('~160',160,20,0,'0xA0',182,32,0,262,'0x5040','0x5880')" onmouseover="hover(182,32,0,262)">BROWN</td>
+                <td class="osColors" style="background-color: rgb(0,0,134);" onclick="OScolor('~16',16,0,128,'0x10',0,0,134,263,'0810','0x0010')" onmouseover="hover(0,0,134,263)">NAVY</td>
+                <td class="osColors" style="background-color: rgb(0,146,255);" onclick="OScolor('~28',24,128,224,'0x1C',0,146,255,264,'0x0E1C','0x025F')" onmouseover="hover(0,146,255,264)">LTBLUE</td>
+                <td class="osColors" style="background-color: rgb(255,255,0); color: #000000;" onclick="OScolor('~231',224,252,56,'0xE7',255,255,0,265,'0x73E7','0x7FE0')" onmouseover="hover(255,255,0,265)">YELLOW</td>
+                <td class="osColors" style="background-color: rgb(255,255,255); color: #000000;" onclick="OScolor('~255',248,252,248,'0xFF',255,255,255,266,'0x7FFF','0x7FFF')" onmouseover="hover(255,255,255,266)">WHITE</td>
+                <td class="osColors" style="background-color: rgb(231,227,231); color: #000000;" onclick="OScolor('~222',216,216,240,'0xDE',231,227,231,267,'0x6F7E','0x739C')" onmouseover="hover(231,227,231,267)">LTGRAY</td>
+                <td class="osColors" style="background-color: rgb(199,195,199); color: #000000;" onclick="OScolor('No known',199,195,199,'close matches',199,195,199,268,'0x6318','0x6318')" onmouseover="hover(199,195,199,268)">MEDGRAY</td>
+                <td class="osColors" style="background-color: rgb(142,138,142); color: #000000;" onclick="OScolor('No known',142,138,142,'close matches',142,138,142,269,'0x4631','0x4631')" onmouseover="hover(142,138,142,269)">GRAY</td>
+                <td class="osColors" style="background-color: rgb(81,85,81);" onclick="OScolor('~74',72,72,80,'0x4A',81,85,81,270,'0x252A','0x294A')" onmouseover="hover(81,85,81,270)">DARKGRAY</td>
             </tr>
         </table>
         <p  id ="TI" style="font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px; padding: 0px;">TI-OS Colors</p>
         <br>
         <footer> <!-- advertising! -->
             <hr style="margin: 0px; margin-bottom: 5px;">
-            <a href="https://www.cemetech.net/forum/viewtopic.php?t=17446&start=0&postdays=0&postorder=asc&highlight=">Ask a question or suggest a feature...</a>
-            <a href="https://github.com/RoccoLoxPrograms/XlibcColorPicker/releases" style="float: right;">Download the newest version...</a>
+            <a href="https://www.cemetech.net/forum/viewtopic.php?t=17446&start=0&postdays=0&postorder=asc&highlight=" target="_blank">Ask a question or suggest a feature...</a>
+            <a href="https://github.com/RoccoLoxPrograms/XlibcColorPicker/releases" target="_blank" style="float: right;">Download the newest version...</a>
         </footer>
         <script type="text/javascript">
             // define all of these variables
@@ -507,17 +268,44 @@
             var g = 0;
             var b = 0;
             var n = 0;
-            var hex = '0x00';
             var oldn = n;
             var oldr = r;
             var oldg = g;
             var oldb = b;
+            var red = 0;
+            var green = 0;
+            var greenIncrease;
+            var blue = 0;
+            var hex = '0x00';
+            var oldHover = 0;
+            var oldHoverR = 0;
+            var oldHoverG = 0;
+            var oldHoverB = 0;
+            // yes, there are a lot
+            for (var i = 0; i < 256; i++) {
+                hex = '0x' + i.toString(16).toUpperCase();
+                if (i < 16) hex = '0x0' + i.toString(16).toUpperCase();
+                if ((i % 8 == 0) && i != 0) red += 8;
+                if (i % 32 == 0 ) greenIncrease = 4 * (i / 32);
+                if (i % 8 != 0) green += 32;
+                else green = 0 + greenIncrease;
+                blue += 8;
+                if (i % 32 == 0) blue = 0;
+                var td = document.createElement('TD');
+                var ID = 'row' + Math.floor((i / 32)).toString();
+                document.getElementById(ID).appendChild(td);
+                document.getElementsByTagName('td')[i].setAttribute('style',`background-color: rgb(${red},${green},${blue});`);
+                document.getElementsByTagName('td')[i].setAttribute('onmouseover',`hover(${red},${green},${blue},${i})`);
+                var c1555 = ((red >> 3) << 10) | ((green >> 3) << 5) | (blue >> 3); // thank you MateoConLechuga (taken from the CE C toolchain)
+                document.getElementsByTagName('td')[i].setAttribute('onclick',`color(${i},${red},${green},${blue},'${hex}',${c1555})`);
+            }
             if (localStorage.getItem("xlibcMode") == 'dark') { // switch to dark mode
                 darkmode();
             } else { // default mode is light
-                document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0</p>';
+                document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0<br>1555: 0x0000</p>';
                 document.getElementsByTagName("footer")[0].setAttribute("style","background-color: rgb(235,235,235);");
                 localStorage.setItem("xlibcMode","light");
+                document.getElementsByTagName('td')[0].setAttribute('style','background-color: rgb(0,0,0); border: solid white 1px; padding: 0px;');
             }
         </script>
     </body>
