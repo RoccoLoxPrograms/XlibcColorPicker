@@ -196,12 +196,14 @@
             // draw hover box
             function hover(red,green,blue,tagNum) {
                 if ((oldHover != oldn) && oldHover < 256) document.getElementsByTagName('td')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR},${oldHoverG},${oldHoverB});`);
-                if ((oldHover != oldn) && oldHover > 255) {
+                if ((oldHover != oldn) && oldHover > 255) { // find if we need to display black or white and remoive old hover box
                     if (oldHover > 264 && oldHover < 270) document.getElementsByTagName('td')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR},${oldHoverG},${oldHoverB}); color: #000000;`);
                     else document.getElementsByTagName('td')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR},${oldHoverG},${oldHoverB}); color: #ffffff;`);
                 }
+                // deisplay new hover box
                 if (((tagNum > 131 && tagNum % 8 > 3) && tagNum < 256) || tagNum > 264 && tagNum < 270) document.getElementsByTagName('td')[tagNum].setAttribute('style',`background-color: rgb(${red},${green},${blue}); border: solid black 1px; padding: 0px; color: #000000;`);
                 else document.getElementsByTagName('td')[tagNum].setAttribute('style',`background-color: rgb(${red},${green},${blue}); border: solid white 1px; padding: 0px;`);
+                // copy variable values
                 oldHover = tagNum;
                 oldHoverR = red;
                 oldHoverG = green;
@@ -209,6 +211,7 @@
             }
 
             function onMouseOut() { // when not over a table
+                // remove hover box
                 if ((oldHover != oldn) && oldHover < 256) document.getElementsByTagName('td')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR},${oldHoverG},${oldHoverB});`);
                 if ((oldHover != oldn) && oldHover > 255) {
                     if (oldHover > 264 && oldHover < 270) document.getElementsByTagName('td')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR},${oldHoverG},${oldHoverB}); color: #000000;`);
@@ -256,7 +259,7 @@
             </tr>
         </table>
         <p  id ="TI" style="font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px; padding: 0px;">TI-OS Colors</p>
-        <br>
+        <br> <!-- for smaller screen sizes -->
         <footer> <!-- advertising! -->
             <hr style="margin: 0px; margin-bottom: 5px;">
             <a href="https://www.cemetech.net/forum/viewtopic.php?t=17446&start=0&postdays=0&postorder=asc&highlight=" target="_blank">Ask a question or suggest a feature...</a>
@@ -283,17 +286,21 @@
             var oldHoverB = 0;
             // yes, there are a lot
             for (var i = 0; i < 256; i++) {
-                hex = '0x' + i.toString(16).toUpperCase();
+                hex = '0x' + i.toString(16).toUpperCase(); // find hex value of number
                 if (i < 16) hex = '0x0' + i.toString(16).toUpperCase();
+                // lots of math to find the rgb value that goes into the background color
                 if ((i % 8 == 0) && i != 0) red += 8;
                 if (i % 32 == 0 ) greenIncrease = 4 * (i / 32);
                 if (i % 8 != 0) green += 32;
                 else green = 0 + greenIncrease;
                 blue += 8;
                 if (i % 32 == 0) blue = 0;
+                // end of last comment
+                // create the table columns
                 var td = document.createElement('TD');
                 var ID = 'row' + Math.floor((i / 32)).toString();
                 document.getElementById(ID).appendChild(td);
+                // add attributes to the table columns
                 document.getElementsByTagName('td')[i].setAttribute('style',`background-color: rgb(${red},${green},${blue});`);
                 document.getElementsByTagName('td')[i].setAttribute('onmouseover',`hover(${red},${green},${blue},${i})`);
                 var c1555 = ((red >> 3) << 10) | ((green >> 3) << 5) | (blue >> 3); // thank you MateoConLechuga (taken from the CE C toolchain)
@@ -302,6 +309,7 @@
             if (localStorage.getItem("xlibcMode") == 'dark') { // switch to dark mode
                 darkmode();
             } else { // default mode is light
+                // default positions and settings
                 document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0<br>1555: 0x0000</p>';
                 document.getElementsByTagName("footer")[0].setAttribute("style","background-color: rgb(235,235,235);");
                 localStorage.setItem("xlibcMode","light");
