@@ -170,7 +170,7 @@
                 document.getElementsByTagName("footer")[0].setAttribute("style","background-color: rgb(235,235,235);"); // change footer background
                 document.getElementById("title").setAttribute("style","color: #000000;"); // change text color
                 document.getElementById("mode").setAttribute("style","color: #000000; float: left;");
-                document.getElementById("copyright").setAttribute("style","color: #808080; float: right; cursor: default;");
+                document.getElementById("copyright").setAttribute("style","color: #808080; float: right;");
                 document.getElementById("mode").innerHTML = 'Switch to Dark Mode'; // change option
                 document.getElementById("OSColors").setAttribute("style","margin: 10px auto; border-color: #000000; border-width: thin; border-style: solid;");
                 document.getElementById("text").setAttribute("style","color: #ffffff; border-color: #000000; border-width: thin; border-style: solid; background-color: rgb(0,0,0);");
@@ -184,7 +184,7 @@
                 document.getElementsByTagName("footer")[0].setAttribute("style","background-color: rgb(40,40,40);"); // change footer background
                 document.getElementById("title").setAttribute("style","color: #ffffff;"); // change text color
                 document.getElementById("mode").setAttribute("style","color: #ffffff; float: left;");
-                document.getElementById("copyright").setAttribute("style","color: #b3b3b3; float: right; cursor: default;");
+                document.getElementById("copyright").setAttribute("style","color: #b3b3b3; float: right;");
                 document.getElementById("mode").innerHTML = 'Switch to Light Mode'; // change option
                 document.getElementById("OSColors").setAttribute("style","margin: 10px auto; border-color: #ffffff; border-width: thin; border-style: solid;"); // change border color
                 document.getElementById("text").setAttribute("style","color: #ffffff; border-color: #ffffff; border-width: thin; border-style: solid; background-color: rgb(0,0,0);");
@@ -218,11 +218,15 @@
                     else document.getElementsByTagName('td')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR},${oldHoverG},${oldHoverB}); color: #ffffff;`);
                 }
             }
+            
+            function copyright() {
+                window.location.href = 'https://github.com/RoccoLoxPrograms/XlibcColorPicker/blob/main/LICENSE';
+            }
         </script>
     </head>
     <body id="background">
         <h3 id="mode" onclick="changemode()" style="float: left;">Switch to Dark Mode</h3> <!-- mode selector -->
-        <h3 id="copyright" style="color: #808080; float: right; cursor: default;">&copy; 2021 RoccoLox Programs</h3>
+        <h3 id="copyright" style="color: #808080; float: right;" onclick="copyright()">&copy; 2021 RoccoLox Programs</h3>
         <br>
         <h1 id="title">Xlibc Color Picker</h1>
         <table cellspacing=0 onmouseout="onMouseOut()">
