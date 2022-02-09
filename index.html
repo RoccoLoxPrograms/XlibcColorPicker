@@ -2,14 +2,15 @@
 <!-- 
     Thank you Privacy_Dragon for your help.
     Thank you mr womp womp and KMisthebomb for your code suggestions.
-    Thank you Zeroko for your rgb888 to rgb1555 conversion code.
+    Thank you Zeroko for your rgb888 to rgb1555 (and vice versa) conversion code.
     Thank you epsilon5 for your suggestions.
     Thank you to anyone else who suggested features and has used this program.
 -->
 <html lang="en">
     <head>
+        <meta charset="utf-8">
         <title>Xlibc Color Picker</title>
-        <style type="text/css"> /* CSS styling */
+        <style type="text/css">
             body {
                 background-color: rgb(243,243,243);
             }
@@ -45,6 +46,7 @@
                 border: solid black 1px;
                 height: fit-content;
                 justify-content: center;
+                border-radius: 5px;
             }
             table {
                 display: table;
@@ -58,7 +60,10 @@
                 font-size: 300%;
                 padding: 2%;
                 font-family: sans-serif;
-                margin: 40px auto 25px auto;
+                margin: 20px auto 25px auto;
+            }
+            p#text {
+                border-radius: 5px;
             }
             p.rgb {
                 text-align: center;
@@ -71,6 +76,12 @@
                 text-align: center;
                 font-family: sans-serif;
                 font-size: 125%;
+                border-radius: 0px 0px 5px 5px;
+            }
+            p#loadCustomPalette {
+                font-size: 150%;
+                padding: 0px;
+                margin: 0px;
             }
             h1 {
                 margin: 5px 0px 0px 0px;
@@ -99,16 +110,66 @@
                 font-size: 110%;
                 padding: 0px 5px 5px 5px;
             }
+            h3#mode {
+                float: left;
+                padding-left: 5px;
+                cursor: text;
+            }
+            /* switch styling */
+            .switch {
+                position: relative;
+                display: inline-block;
+                width: 48px;
+                height: 22px;
+            }
+            .switch input {
+                opacity: 0;
+                width: 0px;
+                height: 0px;
+            }
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: #bebebe;
+                -webkit-transition: .4s;
+                transition: .4s;
+            }
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 16px;
+                width: 16px;
+                left: 4px;
+                bottom: 3px;
+                background-color: white;
+                -webkit-transition: .4s;
+                transition: .4s;
+            }
+            input:checked + .slider:before {
+                -webkit-transform: translateX(24px);
+                -ms-transform: translateX(24px);
+                transform: translateX(24px);
+            }
+            .slider.round {
+                border-radius: 22px;
+            }
+            .slider.round:before {
+                border-radius: 50%;
+            }
         </style>
         <script type="text/javascript">
             // display xlibc colors
-            function color(n,r,g,b,hex,c1555) {
+            function color(n, r, g, b, hex, c1555) {
                 // remove TI-OS color box
                 document.getElementById('osRGB').setAttribute("style","padding: 0px; margin: 0px;");
                 document.getElementById('osRGB').innerHTML = '';
-                if (n > 131 && n % 8 > 3) {
+                if (colorBrightness(r, g, b) > 160) {
                     if (localStorage.getItem("RLP_XlibcColorPicker_mode_090419") == 'light') { // for light mode
-                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); color: #000000; border-color: #000000; border: solid black thin;`); // display xlibc color
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); color: #000000; border: solid black thin;`); // display xlibc color
                     } else { // for dark mode
                         document.getElementById('text').setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); color: #000000; border: solid white thin;`);
                     }
@@ -126,9 +187,9 @@
                 else if (c1555.length == 3) c1555 = '0x0' + c1555;
                 else if (c1555.length == 4) c1555 = '0x' + c1555;
                 document.getElementById('text').innerHTML = `${n}<br>${hex}<p class="rgb">R: ${r} G: ${g} B: ${b}<br>1555: ${c1555}</p>`; // display xlibc values
-                if (oldn > 265 && oldn < 271)  document.getElementsByTagName('div')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); color: #000000;`); // remove selection box
+                if (oldn > 265 && oldn < 270) document.getElementsByTagName('div')[oldn].setAttribute("style",`background-color: rgb(${oldr},${oldg},${oldb}); color: #000000;`); // remove selection box
                 else document.getElementsByTagName('div')[oldn].setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb});`);
-                if (n > 131 && n % 8 > 3) document.getElementsByTagName('div')[n].setAttribute("style",`background-color: rgb(${r}, ${g}, ${b}); border: solid black 1px; padding: 0px;`); // add selection box
+                if (colorBrightness(r, g, b) > 160) document.getElementsByTagName('div')[n].setAttribute("style",`background-color: rgb(${r}, ${g}, ${b}); border: solid black 1px; padding: 0px;`); // add selection box
                 else document.getElementsByTagName('div')[n].setAttribute("style",`background-color: rgb(${r}, ${g}, ${b}); border: solid white 1px; padding: 0px;`);
                 // copy variable values
                 oldn = n;
@@ -138,31 +199,31 @@
             }
 
             // display TI-OS colors
-            function OScolor(n,r,g,b,hex,or,og,ob,tagNum,c1555,OSc1555) {
+            function OScolor(n, r, g, b, hex, or, og, ob, tagNum, c1555, OSc1555) {
                 // remove selection box
                 document.getElementsByTagName('div')[oldn].setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb});`);
-                if (tagNum > 265 && tagNum < 271) {
+                if (tagNum > 265 && tagNum < 270) {
                     if (localStorage.getItem("RLP_XlibcColorPicker_mode_090419") == 'light') { // for light mode
-                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); color: #000000; border: solid black thin; padding: 0.5% 2%; margin: 40px 0px 0px 0px; border-bottom: hidden;`); // display xlibc equivalent
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); color: #000000; border: solid black thin; padding: 0.5% 2%; margin: 20px 0px 0px 0px; border-bottom: hidden; border-radius: 5px 5px 0px 0px;`); // display xlibc equivalent
                         document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or}, ${og}, ${ob}); color: #000000; border: solid black thin; padding: 0.5% 2%; margin: 0px; border-top: hidden;`); // display actual color
                     } else { // for dark mode
-                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); color: #000000; border: solid white thin; padding: 0.5% 2%; margin: 40px 0px 0px 0px; border-bottom: hidden;`);
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); color: #000000; border: solid white thin; padding: 0.5% 2%; margin: 20px 0px 0px 0px; border-bottom: hidden; border-radius: 5px 5px 0px 0px;`);
                         document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or}, ${og}, ${ob}); color: #000000; border: solid white thin; padding: 0.5% 2%; margin: 0px; border-top: hidden;`);
                     }
                 } else {
                     if (localStorage.getItem("RLP_XlibcColorPicker_mode_090419") == 'light') { // for light mode
-                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); color: #ffffff; border: solid black thin; padding: 0.5% 2%; margin: 40px 0px 0px 0px; border-bottom: hidden;`); // display xlibc equivalent
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); color: #ffffff; border: solid black thin; padding: 0.5% 2%; margin: 20px 0px 0px 0px; border-bottom: hidden; border-radius: 5px 5px 0px 0px;`); // display xlibc equivalent
                         document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or}, ${og}, ${ob}); color: #ffffff; border: solid black thin; padding: 0.5% 2%; margin: 0px; border-top: hidden;`); // display actual color
                     } else { // for dark mode
-                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); color: #ffffff; border: solid white thin; padding: 0.5% 2%; margin: 40px 0px 0px 0px; border-bottom: hidden;`);
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); color: #ffffff; border: solid white thin; padding: 0.5% 2%; margin: 20px 0px 0px 0px; border-bottom: hidden; border-radius: 5px 5px 0px 0px;`);
                         document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${or}, ${og}, ${ob}); color: #ffffff; border: solid white thin; padding: 0.5% 2%; margin: 0px; border-top: hidden;`);
                     }
                 }
                 document.getElementById('text').innerHTML = `${n}<br>${hex}<p class="rgb">R: ${r} G: ${g} B: ${b}<br>1555: ${c1555}</p>`; // xlibc equivalent color value
                 document.getElementById('osRGB').innerHTML = `R: ${or} G: ${og} B: ${ob}<br>1555: ${OSc1555}`; // display actual rgb value
-                if (oldn > 265 && oldn < 271)  document.getElementsByTagName('div')[oldn].setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #000000;`); // remove selection box
+                if (oldn > 265 && oldn < 270) document.getElementsByTagName('div')[oldn].setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #000000;`); // remove selection box
                 else document.getElementsByTagName('div')[oldn].setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb});`);
-                if (tagNum > 265 && tagNum < 271) document.getElementsByTagName('div')[tagNum].setAttribute("style",`background-color: rgb(${or}, ${og}, ${ob}); color: #000000; border: solid black 1px; padding: 0px;`); // add selection box
+                if (tagNum > 265 && tagNum < 270) document.getElementsByTagName('div')[tagNum].setAttribute("style",`background-color: rgb(${or}, ${og}, ${ob}); color: #000000; border: solid black 1px; padding: 0px;`); // add selection box
                 else document.getElementsByTagName('div')[tagNum].setAttribute("style",`background-color: rgb(${or}, ${og}, ${ob}); border: solid white 1px; padding: 0px;`);
                 // copy variable values
                 oldn = tagNum;
@@ -185,83 +246,137 @@
                 }
             }
 
-            function lightMode() { // set to light mode
+            function lightMode() {
+                document.getElementById('fileUpload').setAttribute("style","color: #000000;");
                 document.getElementById("body").setAttribute("style","background-color: rgb(243,243,243);"); // chanhe background
                 document.getElementsByTagName("footer")[0].setAttribute("style","background-color: rgb(243,243,243);"); // change footer background
                 document.getElementById("title").setAttribute("style","color: #000000;"); // change text color
-                document.getElementById('changeColorPicker').setAttribute('style','font-size: 100%;  margin: 0px 0px 15px 0px; padding: 0px; font-weight: normal; color: #000000;');
-                document.getElementById("mode").setAttribute("style","color: #000000; float: left;");
+                document.getElementById('changeColorPicker').setAttribute('style','font-size: 100%; margin: 0px 0px 15px 0px; padding: 0px; font-weight: normal; color: #000000;');
+                document.getElementById("mode").setAttribute("style","color: #000000;");
                 document.getElementById("copyright").setAttribute("style","color: #808080; float: right;");
-                document.getElementById("mode").innerHTML = 'Switch to Dark Mode'; // change option
+                document.getElementById("mode").innerHTML = 'Light Mode'; // change option
                 document.getElementById("OSColors").setAttribute("style","margin: 10px auto; border: solid black thin; background-color: #000000;"); // change border color
                 if (oldn > 255) { // if an OS color is being display
-                    if (((oldn > 131 && oldn % 8 > 3) && oldn < 256) || oldn > 265 && oldn < 271) {
-                        document.getElementById('text').setAttribute('style',`background-color: rgb(${red}, ${green}, ${blue}); color: #000000; border: solid black thin; border-style: solid; padding: 0.5% 2%; margin: 40px 0px 0px 0px; border-bottom: hidden;`);
+                    if (colorBrightness(oldr, oldg, oldb) > 160) {
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${red}, ${green}, ${blue}); color: #000000; border: solid black thin; border-style: solid; padding: 0.5% 2%; margin: 20px 0px 0px 0px; border-bottom: hidden; border-radius: 5px 5px 0px 0px;`);
                         document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #000000; border: solid black thin; padding: 0.5% 2%; margin: 0px; border-top: hidden;`);
                     } else {
-                        document.getElementById('text').setAttribute('style',`background-color: rgb(${red}, ${green}, ${blue}); color: #ffffff; border: solid black thin; solid; padding: 0.5% 2%; margin: 40px 0px 0px 0px; border-bottom: hidden;`);
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${red}, ${green}, ${blue}); color: #ffffff; border: solid black thin; solid; padding: 0.5% 2%; margin: 20px 0px 0px 0px; border-bottom: hidden; border-radius: 5px 5px 0px 0px;`);
                         document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #ffffff; border: solid black thin; padding: 0.5% 2%; margin: 0px; border-top: hidden;`);
                     }
                 } else { // else, just change the text foreground color
-                    if (((oldn > 131 && oldn % 8 > 3) && oldn < 256) || oldn > 265 && oldn < 271) document.getElementById("text").setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #000000; border: solid black thin;`);
+                    if (colorBrightness(oldr, oldg, oldb) > 160) document.getElementById("text").setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #000000; border: solid black thin;`);
                     else document.getElementById("text").setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #ffffff; border: solid black thin;`);
                 }
-                document.getElementById("TI").setAttribute("style","font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px; padding: 0px;"); // change text color
+                document.getElementById("TI").setAttribute("style","font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px 15px 0px; padding: 0px;"); // change text color
+                document.getElementById("loadCustomPalette").setAttribute("style","color: #000000;");
             }
 
-            function darkMode() { // set to dark mode
+            function darkMode() {
+                document.getElementById('fileUpload').setAttribute("style","color: #ffffff;");
                 document.getElementById("body").setAttribute("style","background-color: rgb(40,40,40);"); // change background
                 document.getElementsByTagName("footer")[0].setAttribute("style","background-color: rgb(40,40,40);"); // change footer background
                 document.getElementById("title").setAttribute("style","color: #ffffff;"); // change text color
-                document.getElementById('changeColorPicker').setAttribute('style','font-size: 100%;  margin: 0px 0px 15px 0px; padding: 0px; font-weight: normal; color: #ffffff;');
-                document.getElementById("mode").setAttribute("style","color: #ffffff; float: left;");
+                document.getElementById('changeColorPicker').setAttribute('style','font-size: 100%; margin: 0px 0px 15px 0px; padding: 0px; font-weight: normal; color: #ffffff;');
+                document.getElementById("mode").setAttribute("style","color: #ffffff;");
                 document.getElementById("copyright").setAttribute("style","color: #b3b3b3; float: right;");
-                document.getElementById("mode").innerHTML = 'Switch to Light Mode'; // change option
+                document.getElementById("mode").innerHTML = 'Dark Mode'; // change option
                 document.getElementById("OSColors").setAttribute("style","margin: 10px auto; border: solid white thin; background-color: #ffffff;"); // change border color
                 if (oldn > 255) { // if an OS color is being display
-                    if (((oldn > 131 && oldn % 8 > 3) && oldn < 256) || oldn > 265 && oldn < 271) {
-                        document.getElementById('text').setAttribute('style',`background-color: rgb(${red}, ${green}, ${blue}); color: #000000; border: solid white thin; solid; padding: 0.5% 2%; margin: 40px 0px 0px 0px; border-bottom: hidden;`);
+                    if (colorBrightness(oldr, oldg, oldb) > 160) {
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${red}, ${green}, ${blue}); color: #000000; border: solid white thin; solid; padding: 0.5% 2%; margin: 20px 0px 0px 0px; border-bottom: hidden; border-radius: 5px 5px 0px 0px;`);
                         document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #000000; border: solid white thin; padding: 0.5% 2%; margin: 0px; border-top: hidden;`);
                     } else {
-                        document.getElementById('text').setAttribute('style',`background-color: rgb(${red}, ${green}, ${blue}); color: #ffffff; border: solid white thin; border-style: solid; padding: 0.5% 2%; margin: 40px 0px 0px 0px; border-bottom: hidden;`);
+                        document.getElementById('text').setAttribute('style',`background-color: rgb(${red}, ${green}, ${blue}); color: #ffffff; border: solid white thin; border-style: solid; padding: 0.5% 2%; margin: 20px 0px 0px 0px; border-bottom: hidden; border-radius: 5px 5px 0px 0px;`);
                         document.getElementById('osRGB').setAttribute('style',`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #ffffff; border: solid white thin; padding: 0.5% 2%; margin: 0px; border-top: hidden;`);
                     }
                 } else { // else, just change the text foreground color
-                    if (((oldn > 131 && oldn % 8 > 3) && oldn < 256) || oldn > 265 && oldn < 271) document.getElementById("text").setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #000000; border: solid white thin;`);
+                    if (colorBrightness(oldr, oldg, oldb) > 160) document.getElementById("text").setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #000000; border: solid white thin;`);
                     else document.getElementById("text").setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #ffffff; border: solid white thin;`);
                 }
-                document.getElementById("TI").setAttribute("style","font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px; padding: 0px; color: #ffffff;"); // change text color
+                document.getElementById("TI").setAttribute("style","font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px 15px 0px; padding: 0px; color: #ffffff;"); // change text color
+                document.getElementById("loadCustomPalette").setAttribute("style","color: #ffffff;");
             }
 
             // draw hover box
-            function hover(red,green,blue,tagNum) {
+            function hover(r, g, b, tagNum) {
                 onMouseOut(); // remove hover box
                 // deisplay new hover box
-                if (((tagNum > 131 && tagNum % 8 > 3) && tagNum < 256) || tagNum > 265 && tagNum < 271) document.getElementsByTagName('div')[tagNum].setAttribute('style',`background-color: rgb(${red}, ${green}, ${blue}); border: solid black 1px; padding: 0px; color: #000000;`);
-                else document.getElementsByTagName('div')[tagNum].setAttribute('style',`background-color: rgb(${red}, ${green}, ${blue}); border: solid white 1px; padding: 0px;`);
+                if (colorBrightness(r, g, b) > 160) {
+                    document.getElementsByTagName('div')[tagNum].setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); border: solid black 1px; padding: 0px; color: #000000;`);
+                } else {
+                    document.getElementsByTagName('div')[tagNum].setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); border: solid white 1px; padding: 0px;`);
+                }
                 // copy variable values
                 oldHover = tagNum;
-                oldHoverR = red;
-                oldHoverG = green;
-                oldHoverB = blue;
+                oldHoverR = r;
+                oldHoverG = g;
+                oldHoverB = b;
             }
 
             function onMouseOut() { // when not over a table, remove the hover box
                 if ((oldHover != oldn) && oldHover < 256) document.getElementsByTagName('div')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR}, ${oldHoverG}, ${oldHoverB});`);
                 if ((oldHover != oldn) && oldHover > 255) {
-                    if (oldHover > 265 && oldHover < 271) document.getElementsByTagName('div')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR}, ${oldHoverG}, ${oldHoverB}); color: #000000;`);
+                    if (oldHover > 265 && oldHover < 270) document.getElementsByTagName('div')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR}, ${oldHoverG}, ${oldHoverB}); color: #000000;`);
                     else document.getElementsByTagName('div')[oldHover].setAttribute('style',`background-color: rgb(${oldHoverR}, ${oldHoverG}, ${oldHoverB}); color: #ffffff;`);
                 }
             }
+
+            function setDefaultPalette() {
+                colorLightness = 0;
+                red = 0, green = 0, blue = 0, oldn = 0, oldr = 0, oldg = 0, oldb = 0, oldHover = 0, oldHoverR = 0, oldHoverG = 0, oldHoverB = 0;
+                for (var i = 0; i < 256; i++) {
+                    var hex = '0x' + i.toString(16).toUpperCase(); // find hex value of number
+                    if (i < 16) hex = '0x0' + i.toString(16).toUpperCase();
+                    // calculate rgb value of each xlibc color
+                    if ((i % 8 == 0) && i != 0) red += 8;
+                    if (i % 32 == 0) greenIncrease = 4 * (i / 32);
+                    if (i % 8 != 0) green += 32;
+                    else green = 0 + greenIncrease;
+                    blue += 8;
+                    if (i % 32 == 0) blue = 0;
+                    // add attributes to the table columns
+                    document.getElementsByTagName('div')[i].setAttribute('style',`background-color: rgb(${red}, ${green}, ${blue});`);
+                    document.getElementsByTagName('div')[i].setAttribute('onmouseover',`hover(${red}, ${green}, ${blue}, ${i})`);
+                    var scaledGreen = Math.round(green * 63 / 255); // thank you Zeroko
+                    var c1555 = (Math.round(red * 31 / 255) << 10) | (scaledGreen << 15 & 0x8000) | (scaledGreen << 4 & 0x03E0) | Math.round(blue * 31 / 255);
+                    document.getElementsByTagName('div')[i].setAttribute('onclick',`color(${i}, ${red}, ${green}, ${blue}, '${hex}', ${c1555})`);
+                }
+                document.getElementsByTagName('div')[0].setAttribute('style','background-color: rgb(0,0,0); border: solid white 1px; padding: 0px;');
+            }
+
+            // finds the perceived brightness of a color
+            function colorBrightness(red, green, blue) {
+                colorLightness = 0.299 * red + 0.587 * green + 0.114 * blue;
+                return colorLightness;
+            }
+
+            function resetTable(clear) {
+                if (clear) document.getElementById("fileUpload").value = null;
+                document.getElementById('osRGB').setAttribute("style","padding: 0px; margin: 0px;");
+                document.getElementById('osRGB').innerHTML = '';
+                if (localStorage.getItem("RLP_XlibcColorPicker_mode_090419") == 'light') document.getElementById("text").setAttribute("style",'background-color: #000000; color: #ffffff; border: solid black thin;');
+                else document.getElementById("text").setAttribute("style",'background-color: #000000; color: #ffffff; border: solid white thin;');
+                document.getElementById('text').innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0<br>1555: 0x0000</p>';
+                if (oldn > 256) {
+                    if (oldn > 265 && oldn < 270)  document.getElementsByTagName('div')[oldn].setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb}); color: #000000;`);
+                    else document.getElementsByTagName('div')[oldn].setAttribute("style",`background-color: rgb(${oldr}, ${oldg}, ${oldb});`);
+                }
+                setDefaultPalette();
+            }
             
             function info() { // short description
-                alert("Xlibc Color Picker\nBy RoccoLox Programs\nVersion: 1.8\nDate: 2021-08-14\nLicense: BSD 3-Clause License\nDescription: Xlibc color picker for C and Assembly programmers on the TI-84 Plus CE.");
+                alert("Xlibc Color Picker\nBy RoccoLox Programs\nVersion: 1.9\nDate: 2022-01-15\nLicense: BSD 3-Clause License\nDescription: Xlibc color picker for C and Assembly programmers on the TI-84 Plus CE.");
             }
         </script>
     </head>
     <body id="body">
-        <h3 id="mode" onclick="changeMode()" style="float: left;">Switch to Dark Mode</h3> <!-- mode selector -->
-        <h3 id="copyright" style="color: #808080; float: right;" onclick="info()">&copy; 2021 RoccoLox Programs</h3>
+        <label class="switch" style="float: left;">
+            <input type="checkbox" id="switch" onclick="changeMode()">
+            <span class="slider round"></span>
+        </label>
+        <h3 id="mode">Light Mode</h3> <!-- mode indicator -->
+        <h3 id="copyright" style="color: #808080; float: right;" onclick="info()">&copy; 2021-2022 RoccoLox Programs</h3>
         <br>
         <h1 id="title">Xlibc Color Picker</h1>
         <p id="changeColorPicker" style="font-size: 100%;  margin: 0px 0px 15px 0px; padding: 0px; font-weight: normal;">
@@ -287,27 +402,89 @@
             <div class="osColors" style="background-color: rgb(0,0,0);" onclick="OScolor('0',0,0,0,'0x00',0,0,0,259,'0x0000','0x0000')" onmouseover="hover(0,0,0,259)">BLACK</div>
             <div class="osColors" style="background-color: rgb(255,0,255);" onclick="OScolor('~249',248,60,200,'0xF9',255,0,255,260,'0xF8F8','0x7C1F')" onmouseover="hover(255,0,255,260)">MAGENTA</div>
             <div class="osColors" style="background-color: rgb(0,158,0);" onclick="OScolor('~5',0,160,40,'0x05',0,158,0,261,'0x0285','0x8260')" onmouseover="hover(0,158,0,261)">GREEN</div>
-            <div class="osColors" style="background-color: rgb(255,132,42);" onclick="OScolor('~227',224,124,24,'0xE3',255,132,42,262,'0xEDE3','0xFE05')" onmouseover="hover(255,132,42,262)">ORANGE</div>
-            <div class="osColors" style="background-color: rgb(182,32,0);" onclick="OScolor('~160',160,20,0,'0xA0',182,32,0,263,'0xCC40','0x5880')" onmouseover="hover(182,32,0,263)">BROWN</div>
-            <div class="osColors" style="background-color: rgb(0,0,134);" onclick="OScolor('~16',16,0,128,'0x10',0,0,134,264,'0x0810','0x0010')" onmouseover="hover(0,0,134,264)">NAVY</div>
+            <div class="osColors" style="background-color: rgb(255,134,41);" onclick="OScolor('~227',224,124,24,'0xE3',255,134,41,262,'0xEDE3','0xFE05')" onmouseover="hover(255,134,41,262)">ORANGE</div>
+            <div class="osColors" style="background-color: rgb(181,32,0);" onclick="OScolor('~160',160,20,0,'0xA0',181,32,0,263,'0xCC40','0x5880')" onmouseover="hover(181,32,0,263)">BROWN</div>
+            <div class="osColors" style="background-color: rgb(0,0,132);" onclick="OScolor('~16',16,0,128,'0x10',0,0,132,264,'0x0810','0x0010')" onmouseover="hover(0,0,132,264)">NAVY</div>
             <div class="osColors" style="background-color: rgb(0,146,255);" onclick="OScolor('~28',24,128,224,'0x1C',0,146,255,265,'0x0E1B','0x025F')" onmouseover="hover(0,146,255,265)">LTBLUE</div>
             <div class="osColors" style="background-color: rgb(255,255,0); color: #000000;" onclick="OScolor('~231',224,252,56,'0xE7',255,255,0,266,'0x6FE7','0xFFE0')" onmouseover="hover(255,255,0,266)">YELLOW</div>
             <div class="osColors" style="background-color: rgb(255,255,255); color: #000000;" onclick="OScolor('~255',248,252,248,'0xFF',255,255,255,267,'0x7BFE','0xFFFF')" onmouseover="hover(255,255,255,267)">WHITE</div>
-            <div class="osColors" style="background-color: rgb(231,227,231); color: #000000;" onclick="OScolor('~222',216,216,240,'0xDE',231,227,231,268,'0xEB5D','0x739C')" onmouseover="hover(231,227,231,268)">LTGRAY</div>
-            <div class="osColors" style="background-color: rgb(199,195,199); color: #000000;" onclick="OScolor('~181',176,180,168,'0xB5',199,195,199,269,'0x56D4','0x6318')" onmouseover="hover(199,195,199,269)">MEDGRAY</div>
-            <div class="osColors" style="background-color: rgb(142,138,142); color: #000000;" onclick="OScolor('No known',142,138,142,'close matches',142,138,142,270,'0x4631','0x4631')" onmouseover="hover(142,138,142,270)">GRAY</div>
-            <div class="osColors" style="background-color: rgb(81,85,81);" onclick="OScolor('~74',72,72,80,'0x4A',81,85,81,271,'0x252A','0xA94A')" onmouseover="hover(81,85,81,271)">DARKGRAY</div>
+            <div class="osColors" style="background-color: rgb(230,227,230); color: #000000;" onclick="OScolor('~222',216,216,240,'0xDE',230,227,230,268,'0xEB5D','0x739C')" onmouseover="hover(230,227,230,268)">LTGRAY</div>
+            <div class="osColors" style="background-color: rgb(197,194,197); color: #000000;" onclick="OScolor('~181',176,180,168,'0xB5',197,194,197,269,'0x56D4','0x6318')" onmouseover="hover(197,194,197,269)">MEDGRAY</div>
+            <div class="osColors" style="background-color: rgb(140,138,140);" onclick="OScolor('~148',144,144,160,'0x94',140,138,140,270,'0x4A53','0x4631')" onmouseover="hover(140,138,140,270)">GRAY</div>
+            <div class="osColors" style="background-color: rgb(82,85,82);" onclick="OScolor('~74',72,72,80,'0x4A',82,85,82,271,'0x252A','0xA94A')" onmouseover="hover(82,85,82,271)">DARKGRAY</div>
         </div>
-        <p  id ="TI" style="font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px; padding: 0px;">TI-OS Colors</p>
+        <p id ="TI" style="font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px 15px 0px; padding: 0px;">TI-OS Colors</p>
+        <p id="loadCustomPalette">
+            Load Custom Palette
+            <br>
+            <input type="file" name="palette" accept=".c" id="fileUpload" value="Custom Palette" class="customPalette">
+            <input type="button" onclick="resetTable(true)" value="Reset Palette" class="customPalette">
+        </p>
         <br> <!-- for smaller screen sizes -->
+        <br>
         <footer> <!-- advertising! -->
             <hr style="margin: 0px; margin-bottom: 5px;">
             <a href="https://www.cemetech.net/forum/viewtopic.php?t=17446&highlight=" target="_blank">Ask a question or suggest a feature</a>
-            <a href="https://github.com/RoccoLoxPrograms/XlibcColorPicker/releases" target="_blank" style="float: right;">Download the newest version</a>
+            <a href="https://github.com/RoccoLoxPrograms/XlibcColorPicker/releases/latest" target="_blank" style="float: right;">Download the newest version</a>
         </footer>
         <script type="text/javascript">
+            // load palette from C file
+            document.getElementById('fileUpload').onchange = function() {
+                var r, g, b, paletteHex;
+                var palette = this.files[0];
+                var fileReader = new FileReader();
+                fileReader.onload = function(progressEvent) {
+                    var paletteFile = this.result.split('\n');
+                    var lineNum = 1;
+                    var tableOffset = 0;
+                    var startValue, pal1, pal2, hex1555color;
+                    resetTable(false);
+                    while (paletteFile[lineNum].indexOf('}') == -1) {
+                        if (paletteFile[lineNum].indexOf('0x') != -1) {
+                            pal2 = paletteFile[lineNum].substr(paletteFile[lineNum].indexOf('0x') + 2, 2);
+                            startValue = paletteFile[lineNum].indexOf('0x') + 1;
+                            pal1 = paletteFile[lineNum].substr(paletteFile[lineNum].indexOf('0x', startValue) + 2, 2);
+                            hex1555color = parseInt(pal1 + pal2, 16);
+                            red = Math.round((hex1555color >> 10 & 31) * 255 / 31);
+                            green = Math.round((hex1555color >> 15 & 1 | hex1555color >> 4 & 62) * 255 / 63);
+                            blue = Math.round((hex1555color & 31) * 255 / 31);
+                            if (tableOffset == 0) { // save the rgb values of the first color (for drawing the border box later)
+                                r = red;
+                                g = green;
+                                b = blue;
+                                paletteHex = pal1.toUpperCase() + pal2.toUpperCase();
+                            }
+                            hex = '0x' + tableOffset.toString(16).toUpperCase(); // find hex value of number
+                            if (tableOffset < 16) hex = '0x0' + tableOffset.toString(16).toUpperCase();
+                            document.getElementsByTagName('div')[tableOffset].setAttribute('style',`background-color: rgb(${red}, ${green}, ${blue});`);
+                            document.getElementsByTagName('div')[tableOffset].setAttribute('onmouseover',`hover(${red}, ${green}, ${blue}, ${tableOffset})`);
+                            document.getElementsByTagName('div')[tableOffset].setAttribute('onclick',`color(${tableOffset}, ${red}, ${green}, ${blue}, '${hex}', ${hex1555color})`);
+                            tableOffset++;
+                        }
+                        lineNum++;
+                    }
+                    if (colorBrightness(r, g, b) > 160) {
+                        document.getElementsByTagName('div')[0].setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); border: solid black 1px; padding: 0px; color: #000000;`);
+                        if (localStorage.getItem("RLP_XlibcColorPicker_mode_090419") == 'light') document.getElementById("text").setAttribute("style",`background-color: rgb(${r}, ${g}, ${b}); color: #000000; border: solid black thin;`);
+                        else document.getElementById("text").setAttribute("style",`background-color: rgb(${r}, ${g}, ${b}); color: #000000; border: solid white thin;`);
+                    } else {
+                        document.getElementsByTagName('div')[0].setAttribute('style',`background-color: rgb(${r}, ${g}, ${b}); border: solid white 1px; padding: 0px; color: #ffffff;`);
+                        if (localStorage.getItem("RLP_XlibcColorPicker_mode_090419") == 'light') document.getElementById("text").setAttribute("style",`background-color: rgb(${r}, ${g}, ${b}); color: #ffffff; border: solid black thin;`);
+                        else document.getElementById("text").setAttribute("style",`background-color: rgb(${r}, ${g}, ${b}); color: #ffffff; border: solid white thin;`);
+                    }
+                    document.getElementById('text').innerHTML = `0<br>0x00<p class="rgb">R: ${r} G: ${g} B: ${b}<br>1555: 0x${paletteHex}</p>`;
+                    oldr = r;
+                    oldg = g;
+                    oldb = b;
+                    oldHoverR = r;
+                    oldHoverG = g;
+                    oldHoverB = b;
+                };
+                fileReader.readAsText(palette);
+            }
+
             document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0<br>1555: 0x0000</p>';
-            // define all of these variables
+            var colorLightness = 0;
             var red = 0, green = 0, blue = 0, oldn = 0, oldr = 0, oldg = 0, oldb = 0, oldHover = 0, oldHoverR = 0, oldHoverG = 0, oldHoverB = 0;
             for (var i = 0; i < 256; i++) {
                 var hex = '0x' + i.toString(16).toUpperCase(); // find hex value of number
@@ -332,8 +509,10 @@
             }
             document.getElementsByTagName('div')[0].setAttribute('style','background-color: rgb(0,0,0); border: solid white 1px; padding: 0px;');
             // set mode
-            localStorage.setItem("RLP_XlibcColorPicker_mode_090419", localStorage.getItem("RLP_1555ColorPicker_mode_052920"));
-            if (localStorage.getItem("RLP_XlibcColorPicker_mode_090419") == 'dark') darkMode(); // switch to dark mode
+            if (localStorage.getItem("RLP_XlibcColorPicker_mode_090419") == 'dark') {
+                document.getElementById("switch").checked = true;
+                darkMode(); // switch to dark mode
+            }
             else localStorage.setItem("RLP_XlibcColorPicker_mode_090419","light"); // default mode is light
         </script>
     </body>
