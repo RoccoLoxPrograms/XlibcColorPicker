@@ -375,7 +375,7 @@
                 document.getElementById("title").setAttribute("style","color: #000000;"); // change text color
                 document.getElementById('changeColorPicker').setAttribute('style','font-size: 100%; margin: 0px 0px 15px 0px; padding: 0px; font-weight: normal; color: #000000;');
                 document.getElementById("mode").setAttribute("style","color: #000000;");
-                document.getElementById("copyright").setAttribute("style","color: #808080; float: right;");
+                document.getElementById("copyright").setAttribute("style","color: #808080; float: right; padding-left: 5px;");
                 document.getElementById("mode").innerHTML = 'Light Mode &nbsp;'; // change option
                 document.getElementById("OSColors").setAttribute("style","margin: 10px auto; border: solid black thin; background-color: #000000;"); // change border color
                 if (oldn > 255) { // if an OS color is being display
@@ -393,6 +393,7 @@
                 document.getElementById("TI").setAttribute("style","font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px 15px 0px; padding: 0px;"); // change text color
                 document.getElementById("loadCustomPalette").setAttribute("style","color: #000000;");
                 document.getElementById("dropdownBox").setAttribute("style","background-color: rgb(243,243,243); border: solid black 1px;");
+                document.getElementById("breakLine").setAttribute("style","color: #000000; float: right; cursor: default;");
             }
 
             function darkMode() {
@@ -402,7 +403,7 @@
                 document.getElementById("title").setAttribute("style","color: #ffffff;"); // change text color
                 document.getElementById('changeColorPicker').setAttribute('style','font-size: 100%; margin: 0px 0px 15px 0px; padding: 0px; font-weight: normal; color: #ffffff;');
                 document.getElementById("mode").setAttribute("style","color: #ffffff;");
-                document.getElementById("copyright").setAttribute("style","color: #b3b3b3; float: right;");
+                document.getElementById("copyright").setAttribute("style","color: #b3b3b3; float: right; padding-left: 5px;");
                 document.getElementById("mode").innerHTML = 'Dark Mode &nbsp;'; // change option
                 document.getElementById("OSColors").setAttribute("style","margin: 10px auto; border: solid white thin; background-color: #ffffff;"); // change border color
                 if (oldn > 255) { // if an OS color is being display
@@ -420,6 +421,7 @@
                 document.getElementById("TI").setAttribute("style","font-size: 170%; font-family: sans-serif; font-weight: bold; text-align: center; margin: 5px 0px 15px 0px; padding: 0px; color: #ffffff;"); // change text color
                 document.getElementById("loadCustomPalette").setAttribute("style","color: #ffffff;");
                 document.getElementById("dropdownBox").setAttribute("style","background-color: rgb(40,40,40); border: solid white 1px;");
+                document.getElementById("breakLine").setAttribute("style","color: #ffffff; float: right; cursor: default;");
             }
 
             // draw hover box
@@ -520,6 +522,15 @@
                     else if (c565.length == 3) c565 = '0x0' + c565;
                     else if (c565.length == 4) c565 = '0x' + c565;
                     navigator.clipboard.writeText(c565);
+                } else if (buttonNumber == 6) {
+                    let redHex = parseInt(oldr).toString(16).toUpperCase();
+                    let greenHex = parseInt(oldg).toString(16).toUpperCase();
+                    let blueHex = parseInt(oldb).toString(16).toUpperCase();
+                    if (redHex.length == 1) redHex = '0' + redHex;
+                    if (greenHex.length == 1) greenHex = '0' + greenHex;
+                    if (blueHex.length == 1) blueHex = '0' + blueHex;
+                    copy24Hex = redHex + greenHex + blueHex;
+                    navigator.clipboard.writeText(copy24Hex);
                 }
             }
 
@@ -536,7 +547,7 @@
             }
             
             function info() { // short description
-                alert("Xlibc Color Picker\nBy RoccoLox Programs\nVersion: 1.11\nDate: 2022-06-09\nLicense: BSD 3-Clause License\nDescription: Xlibc color picker for C and Assembly programmers on the TI-84 Plus CE.");
+                alert("Xlibc Color Picker\nBy RoccoLox Programs\nVersion: 1.12\nDate: 2022-09-17\nLicense: BSD 3-Clause License\nDescription: Xlibc color picker for C and Assembly programmers on the TI-84 Plus CE.");
             }
         </script>
     </head>
@@ -550,13 +561,16 @@
             <input type="button" value="Copy Values" class="customPalette copyButtons" onclick="dropdownButtons(0)">
             <section id="dropdownBox" class="dropdownButtons" style="background-color: rgb(243,243,243); border: solid black 1px;">
                 <input type="button" value="Copy Decimal" class="customPalette copyButtons" onclick="dropdownButtons(1)">
-                <input type="button" value="Copy Hex" class="customPalette copyButtons" onclick="dropdownButtons(2)">
+                <input type="button" value="Copy 8b Hex" class="customPalette copyButtons" onclick="dropdownButtons(2)">
                 <input type="button" value="Copy RGB" class="customPalette copyButtons" onclick="dropdownButtons(3)">
                 <input type="button" value="Copy 1555" class="customPalette copyButtons" onclick="dropdownButtons(4)">
-                <input type="button" value="Copy 565" class="customPalette copyButtons" onclick="dropdownButtons(5)" style="margin: 0px;">
+                <input type="button" value="Copy 565" class="customPalette copyButtons" onclick="dropdownButtons(5)">
+                <input type="button" value="Copy 24b Hex" class="customPalette copyButtons" onclick="dropdownButtons(6)" style="margin: 0px;">
             </section>
         </section>
-        <h3 id="copyright" style="color: #808080; float: right;" onclick="info()"></h3>
+        <h3 id="copyright" style="color: #808080; float: right; padding-left: 5px;" onclick="info()"></h3>
+        <h3 style="color: #000000; float: right; cursor: default;" id="breakLine">|</h3>
+        <a href="https://github.com/RoccoLoxPrograms/XlibcColorPicker/blob/main/README.md" target="_blank" style="float: right;" title="See a list of features.">View ReadMe</a>
         <br>
         <h1 id="title">Xlibc Color Picker</h1>
         <p id="changeColorPicker" style="font-size: 100%;  margin: 0px 0px 15px 0px; padding: 0px; font-weight: normal;">
@@ -671,7 +685,7 @@
             document.getElementById("text").innerHTML = '0<br>0x00<p class="rgb">R: 0 G: 0 B: 0<br>1555: 0x0000</p>';
             var colorLightness = 0, paletteLoaded = false;
             var red = 0, green = 0, blue = 0, oldn = 0, oldr = 0, oldg = 0, oldb = 0, oldHover = 0, oldHoverR = 0, oldHoverG = 0, oldHoverB = 0;
-            var copyDec = 0, copyHex = "0x00", copyRGB = "r: 0, b: 0, g: 0", copy1555 = "0x0000", copy565 = "0x0000";
+            var copyDec = 0, copyHex = "0x00", copyRGB = "r: 0, g: 0, b: 0", copy1555 = "0x0000", copy565 = "0x0000", copy24Hex = "000000";
             for (let colorNum = 0; colorNum < 256; colorNum++) {
                 let hex = '0x' + colorNum.toString(16).toUpperCase(); // find hex value of number
                 if (colorNum < 16) hex = '0x0' + colorNum.toString(16).toUpperCase();
